@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+http://www.springframework.org/schema/context 
+http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<context:property-placeholder />
+	<context:annotation-config />
+	<tx:annotation-driven />
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${datasource.driver}" />
+		<property name="url" value="${datasource.url}" />
+		<property name="username" value="${datasource.username}" />
+		<property name="password" value="${datasource.password}" />
+	</bean>
+
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+
+		<!-- jpaProperties-ref="jpaProperties" -->
+		<property name="JpaDialect">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+		</property>
+
+		<property name="persistenceUnitName" value="${persistenceUnitName}" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="com.jdom.tvshowdownloader.ejb.UrlDownloadService"
+		class="${urlDownloadService.impl}" />
+
+	<bean id="downloadNzb" class="com.jdom.services.series.actions.DownloadNzb">
+		<constructor-arg ref="com.jdom.tvshowdownloader.ejb.UrlDownloadService" />
+	</bean>
+
+	<bean id="seriesDownloadProcessor"
+		class="com.jdom.services.series.download.SeriesDownloadProcessor">
+		<constructor-arg ref="downloadNzb" />
+	</bean>
+
+	<bean id="mediaDownloader" class="com.jdom.tvshowdownloader.sar.MediaDownloader">
+		<constructor-arg ref="seriesDownloadProcessor" />
+	</bean>
+
+	<bean id="nzbLinkFinder"
+		class="com.jdom.services.series.util.NzbIndexRssFeedLinkFinder">
+		<constructor-arg ref="com.jdom.tvshowdownloader.ejb.UrlDownloadService" />
+	</bean>
+
+	<bean id="nzbRetrieveAction" class="com.jdom.services.series.actions.NzbRetrieveAction" />
+
+	<bean id="seriesDownloadUpdater"
+		class="com.jdom.services.series.download.SeriesDownloadUpdater"
+		factory-method="getInstance">
+		<property name="nzbRetrieveAction" ref="nzbRetrieveAction" />
+	</bean>
+
+
+	<bean id="com.jdom.tvshowdownloader.ejb.ConfigurationManagerService"
+		class="com.jdom.tvshowdownloader.ejb.ConfigurationManager">
+		<property name="seriesLinkFinder" ref="nzbLinkFinder" />
+	</bean>
+
+	<bean id="serviceLocator" class="com.jdom.services.util.ServiceLocator" />
+
+	<bean id="com.jdom.tvshowdownloader.ejb.SeriesDASService" class="com.jdom.tvshowdownloader.ejb.SeriesDAS" />
+
+	<bean id="com.jdom.tvshowdownloader.ejb.SeriesNotificationDASService"
+		class="com.jdom.tvshowdownloader.ejb.SeriesNotificationDAS" />
+
+	<bean id="com.jdom.tvshowdownloader.ejb.UserDASService" class="com.jdom.tvshowdownloader.ejb.UserDAS" />
+
+	<bean id="com.jdom.tvshowdownloader.ejb.SeriesDownloadDASService"
+		class="com.jdom.tvshowdownloader.ejb.SeriesDownloadDAS" />
+
+	<bean id="seriesDownloadQueueManager"
+		class="com.jdom.services.series.download.queue.SeriesDownloadDatabaseQueue" />
+
+</beans>

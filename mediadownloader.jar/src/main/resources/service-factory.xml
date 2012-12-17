@@ -1,0 +1,3 @@
+<ServiceFactoryConfig default-locator="com.jdom.util.locator.strategies.SpringLocator" >
+    <Services />
+</ServiceFactoryConfig>

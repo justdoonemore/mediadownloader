@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+	<persistence-unit name="MEDIASERVER" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>com.jdom.tvshowdownloader.domain.Series</class>
+		<class>com.jdom.tvshowdownloader.domain.SeriesDownload</class>
+		<class>com.jdom.tvshowdownloader.domain.SeriesNotification</class>
+		<class>com.jdom.tvshowdownloader.domain.User</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url" value="unused" />
+			<property name="javax.persistence.jdbc.user" value="unused" />
+			<property name="javax.persistence.jdbc.password" value="unused" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="false" />
+		</properties>
+	</persistence-unit>
+		<persistence-unit name="MEDIASERVER_INTEGRATION_TEST" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>com.jdom.tvshowdownloader.domain.Series</class>
+		<class>com.jdom.tvshowdownloader.domain.SeriesDownload</class>
+		<class>com.jdom.tvshowdownloader.domain.SeriesNotification</class>
+		<class>com.jdom.tvshowdownloader.domain.User</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
+			<property name="javax.persistence.jdbc.url" value="unused" />
+			<property name="javax.persistence.jdbc.user" value="unused" />
+			<property name="javax.persistence.jdbc.password" value="unused" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect" />
+			<property name="hibernate.hbm2ddl.auto" value="create-drop" />
+			<property name="hibernate.show_sql" value="false" />
+			<property name="hibernate.format_sql" value="false" />
+		</properties>
+	</persistence-unit>
+</persistence>

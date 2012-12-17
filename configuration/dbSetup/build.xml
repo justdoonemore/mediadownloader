@@ -1,0 +1,227 @@
+<project name="Database creation" basedir="." default="usage">
+
+	<target name="check-env-properties">
+		<available file="env.properties" property="env.properties.available" />
+	</target>
+
+	<target name="copy-env-properties-template" description="Copies template env.properties if needed" 
+	    depends="check-env-properties" unless="env.properties.available">
+	    <copy file="env.properties.template" tofile="env.properties" />
+	</target>
+	
+	<target name="checkArgs" depends="copy-env-properties-template" description="Verifies necessary arguments were specified">
+		<property environment="env" />
+		<property file="dbload.properties" />
+		<property file="env.properties" />
+			
+		<fail message="Please add the admin.datasource.username to the env.properties file!" unless="admin.datasource.username" />
+		<fail message="Please add the admin.datasource.password to the env.properties file!" unless="admin.datasource.password" />
+		<fail message="Please add the env argument to the env.properties file!" unless="env" />
+		<fail message="Please set the JBOSS_HOME environment variable!" unless="env.JBOSS_HOME" />
+	</target>
+
+	<!-- Performs initialization -->
+	<target name="init" depends="checkArgs" description="sets up the db script generation">
+		<property file="${basedir}/../properties/${env}.properties" />
+
+		<!-- Set up classpath to database driver -->
+		<path id="db.classpath">
+			<fileset dir="${basedir}/lib" />
+			<fileset dir="${env.JBOSS_HOME}/modules">
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+
+		<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="db.classpath" />
+
+		<!-- This must be created here because it uses local properties -->
+		<property name="GENERATED.DIR" value="${WORKING.DIR}/generated" />
+
+		<!-- Create a fresh generation directory -->
+		<delete dir="${GENERATED.DIR}" />
+		<mkdir dir="${GENERATED.DIR}" />
+	</target>
+
+	<!-- This runs all of the setup targets -->
+	<target name="setup" depends="init, createSchema, createUsers, createTables, insertData, post-setup" />
+
+	<!-- Creates the database schema -->
+	<target name="createSchema">
+		<runSQL file="${SQL.CREATE.DIR}/create_database.sql" />
+	</target>
+
+	<!-- Creates the database users -->
+	<target name="createUsers">
+		<runSQL file="${SQL.CREATE.DIR}/create_users.sql" />
+	</target>
+
+	<!-- Creates the database tables -->
+	<target name="createTables">
+		<runSQL file="${SQL.CREATE.DIR}/create_tables.sql" />
+	</target>
+
+	<!-- Inserts database data -->
+	<target name="insertData" depends="sanity-check, generate-loading-scripts">
+		<runDirectoryScripts directory="${GENERATED.DIR}" scriptextension="${TEMPLATES.FILE.EXTENSION}" />
+	</target>
+
+	<target name="post-setup" description="Runs post setup tasks">
+		<runDirectoryScripts directory="${POST.SETUP.DIR}" scriptextension="sql" />
+	</target>
+
+	<!-- Cleans the database -->
+	<target name="cleanall" depends="init, dropSchema, dropUsers, createAnonUser" />
+
+	<!-- Drops the schema from the database -->
+	<target name="dropSchema">
+		<runSQL file="${SQL.CLEAN.DIR}/drop_schema.sql" />
+	</target>
+
+	<!-- Drops the users from the database -->
+	<target name="dropUsers">
+		<runSQL file="${SQL.CLEAN.DIR}/drop_users.sql" />
+	</target>
+
+	<target name="createAnonUser">
+		<if>
+			<available file="${SQL.CLEAN.DIR}/create_anon_user.sql" />
+			<then>
+				<runSQL file="${SQL.CLEAN.DIR}/create_anon_user.sql" />
+			</then>
+		</if>
+	</target>
+
+	<!-- Prints the usage of the scripts -->
+	<target name="usage" description="Prints out usage instructions">
+		<echo>To clean the database: ant cleanall</echo>
+		<echo>To setup the database: ant setup</echo>
+	</target>
+
+	<!-- Generates the database loading scripts from the templates and data files -->
+	<target name="generate-loading-scripts" description="generates the loading scripts">
+		<!-- Loop over all templates files -->
+		<for param="file">
+			<fileset dir="${TEMPLATES.DIR}" includes="*.${TEMPLATES.FILE.EXTENSION}" />
+			<sequential>
+				<!-- Create a variable to hold file contents -->
+				<var name="template.file.contents" unset="true" />
+				<var name="file.name.minus.suffix" unset="true" />
+
+				<!-- Retrieve the actual file name (remove directory) and suffix -->
+				<var name="file.name" unset="true" />
+				<basename property="file.name.minus.suffix" file="@{file}" suffix=".${TEMPLATES.FILE.EXTENSION}" />
+
+				<!-- Create the temporary loading file -->
+				<var name="temp.file.name" value="${GENERATED.DIR}/${file.name.minus.suffix}.${TEMPLATES.FILE.EXTENSION}" />
+
+				<!-- Make a blank temp file -->
+				<touch file="${temp.file.name}" />
+
+				<!-- Read template file contents into property -->
+				<loadfile property="template.file.contents" srcFile="@{file}" />
+
+				<!-- Loop over the data file lines -->
+				<for param="dataFile">
+					<fileset dir="${DATA.DIR}" includes="${file.name.minus.suffix}.${DATA.FILE.EXTENSION}" />
+					<sequential>
+						<!-- Create the variable to hold the whole data file -->
+						<var name="dat.file.contents" unset="true" />
+
+						<!-- Read the data file contents into the aforementioned variable-->
+						<loadfile property="dat.file.contents" srcFile="@{dataFile}" />
+
+						<!-- Split on each line and create an insert statement -->
+						<for list="${dat.file.contents}" param="line" delimiter="${line.separator}">
+							<sequential>
+								<!-- Write the line out to the resulting file we are creating followed by a new line -->
+								<echo file="${temp.file.name}" append="true" message="${template.file.contents}${line.separator}" />
+
+								<!-- Break the line up into separate values -->
+								<for list="@{line}" param="value" delimiter="${DATA.FILE.DELIMETER}">
+									<sequential>
+										<!-- Replace the first occurence of the token each loop -->
+										<replaceregexp byline="true" file="${temp.file.name}" match="${REPLACE.TOKEN}" replace="@{value}" />
+									</sequential>
+								</for>
+							</sequential>
+						</for>
+					</sequential>
+				</for>
+			</sequential>
+		</for>
+	</target>
+
+	<!-- Check environment conditions for sanity -->
+	<target name="sanity-check" description="Perform a sanity check" depends="init">
+		<!-- Make sure the templates and data files are there -->
+		<echo>DATA DIR: ${DATA.DIR}</echo>
+		<available file="${TEMPLATES.DIR}" type="dir" property="templates.dir.exists" />
+		<available file="${DATA.DIR}" type="dir" property="data.dir.exists" />
+
+		<!-- Check that needed directories are present -->
+		<if>
+			<not>
+				<isset property="templates.dir.exists" />
+			</not>
+			<then>
+				<fail message="Template directory must exist!" />
+			</then>
+			<else>
+				<if>
+					<not>
+						<isset property="data.dir.exists" />
+					</not>
+					<then>
+						<fail message="Data directory must exist!" />
+					</then>
+				</if>
+			</else>
+		</if>
+
+		<!-- Verify that for every template file, a data file exists -->
+		<for param="file">
+			<fileset dir="${TEMPLATES.DIR}" includes="*.${TEMPLATES.FILE.EXTENSION}" />
+			<sequential>
+				<!-- Retrieve the actual file name (remove directory) -->
+				<var name="file.name" unset="true" />
+				<basename property="file.name" file="@{file}" suffix=".${TEMPLATES.FILE.EXTENSION}" />
+				<var name="data.file.exists" unset="true" />
+
+				<!-- Data file should exist -->
+				<available file="${DATA.DIR}/${file.name}.${DATA.FILE.EXTENSION}" type="file" property="data.file.exists" />
+				<if>
+					<not>
+						<isset property="data.file.exists" />
+					</not>
+					<then>
+						<fail message="Could not find corresponding data file for template file @{file}" />
+					</then>
+				</if>
+
+			</sequential>
+		</for>
+	</target>
+
+
+	<!-- Runs the database scripts located in a specific directory with the specified extension -->
+	<macrodef name="runDirectoryScripts">
+		<attribute name="directory" />
+		<attribute name="scriptExtension" />
+		<sequential>
+			<for param="file">
+				<fileset dir="@{directory}" includes="*.@{scriptExtension}" />
+				<sequential>
+					<runSQL file="@{file}" />
+				</sequential>
+			</for>
+		</sequential>
+	</macrodef>
+
+	<!-- This macro runs a SQL script -->
+	<macrodef name="runSQL">
+		<attribute name="file" />
+		<sequential>
+			<sql driver="${DB.DRIVER}" url="${admin.datasource.url}" userid="${admin.datasource.username}" password="${admin.datasource.password}" classpathref="db.classpath" src="@{file}" />
+		</sequential>
+	</macrodef>
+</project>

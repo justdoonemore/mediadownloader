@@ -1,0 +1,3 @@
+-- Delete the database schemas
+DROP SCHEMA IF EXISTS `${JBOSS.SCHEMA}`;
+DROP SCHEMA IF EXISTS `${MEDIASERVER.SCHEMA}`;

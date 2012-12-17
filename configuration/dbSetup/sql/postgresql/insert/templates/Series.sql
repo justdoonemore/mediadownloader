@@ -1,0 +1,2 @@
+${INSERT.STATEMENT} ${MEDIASERVER.SCHEMA}.${SERIES.TABLE} (name, season, episode) VALUES ('@VALUE@', '@VALUE@', '@VALUE@');
+

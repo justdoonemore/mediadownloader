@@ -1,0 +1,2 @@
+#!/bin/bash
+*/15 * * * * root cd /home/djohnson/apps/mediadownloader && /home/djohnson/apps/java/bin/java -jar mediadownloader.jar /etc/mediaserver.properties
