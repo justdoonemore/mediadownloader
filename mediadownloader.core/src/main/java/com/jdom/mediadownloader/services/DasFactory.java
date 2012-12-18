@@ -14,31 +14,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jdom.tvshowdownloader.integration;
+package com.jdom.mediadownloader.services;
 
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * @author djohnson
+ *
+ */
+public interface DasFactory {
 
-import com.jdom.mediadownloader.services.EmailService;
-import com.jdom.util.email.Email;
+	SeriesDASService getSeriesDAS();
 
-public class MockEmailService implements EmailService {
+	UserDASService getUserDAS();
 
-	public static MockEmailService instance;
+	SeriesNotificationDASService getSeriesNotificationDAS();
 
-	private final List<Email> sentEmails = new ArrayList<Email>();
-
-	public MockEmailService() {
-		instance = this;
-	}
-
-	@Override
-	public void email(Email email) {
-		sentEmails.add(email);
-	}
-
-	public List<Email> getSentEmails() {
-		return sentEmails;
-	}
+	SeriesDownloadDASService getSeriesDownloadDAS();
 
 }

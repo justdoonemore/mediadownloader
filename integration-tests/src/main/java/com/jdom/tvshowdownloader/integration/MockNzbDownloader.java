@@ -19,20 +19,36 @@ package com.jdom.tvshowdownloader.integration;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Collection;
 
-import com.jdom.mediadownloader.services.ConfigurationManager;
-import com.jdom.services.series.download.NzbDownloader;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class MockNzbDownloader implements NzbDownloader {
+import com.jdom.mediadownloader.services.ConfigurationManagerService;
+import com.jdom.mediadownloader.services.DasFactory;
+import com.jdom.mediadownloader.services.SeriesNotifierService;
+import com.jdom.mediadownloader.services.UrlDownloadService;
+import com.jdom.services.series.download.SabnzbdNzbDownloader;
+import com.jdom.services.series.download.SeriesDownload;
 
-	private final ConfigurationManager configurationManager;
+public class MockNzbDownloader extends SabnzbdNzbDownloader implements
+		ApplicationContextAware {
 
-	public MockNzbDownloader(final ConfigurationManager configurationManager) {
-		this.configurationManager = configurationManager;
+	public static ApplicationContext context;
+
+	public MockNzbDownloader(DasFactory dasFactory,
+			ConfigurationManagerService configurationManager,
+			UrlDownloadService urlDownloadService,
+			SeriesNotifierService seriesNotifier) {
+		super(dasFactory, configurationManager, urlDownloadService,
+				seriesNotifier);
 	}
 
 	@Override
-	public void downloadNzbs() {
+	public void downloadNzbs(Collection<SeriesDownload> downloads) {
+		super.downloadNzbs(downloads);
+
 		final File scanDir = configurationManager.getNzbDestinationDirectory();
 		final File destinationDir = configurationManager
 				.getNzbDownloadedDirectory();
@@ -57,6 +73,12 @@ public class MockNzbDownloader implements NzbDownloader {
 			}
 		}
 
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext arg0)
+			throws BeansException {
+		MockNzbDownloader.context = arg0;
 	}
 
 }

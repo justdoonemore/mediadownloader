@@ -14,31 +14,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jdom.tvshowdownloader.integration;
+package com.jdom.services.series.util;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import com.jdom.mediadownloader.services.EmailService;
-import com.jdom.util.email.Email;
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.services.series.download.SeriesDownload;
 
-public class MockEmailService implements EmailService {
+public interface SeriesLinkFinder {
 
-	public static MockEmailService instance;
+	/**
+	 * Downloads the available links to check for a series.
+	 * 
+	 * @param series
+	 *            the series to check for links of
+	 * @return the possible links
+	 */
+	Collection<String> getPossibleLinksForSeries(Series series);
 
-	private final List<Email> sentEmails = new ArrayList<Email>();
-
-	public MockEmailService() {
-		instance = this;
-	}
-
-	@Override
-	public void email(Email email) {
-		sentEmails.add(email);
-	}
-
-	public List<Email> getSentEmails() {
-		return sentEmails;
-	}
-
+	/**
+	 * @param entities
+	 * @return
+	 */
+	Collection<SeriesDownload> findSeriesDownloads(List<Series> entities);
 }

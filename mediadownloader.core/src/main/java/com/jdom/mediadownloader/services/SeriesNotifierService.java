@@ -14,31 +14,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jdom.tvshowdownloader.integration;
+package com.jdom.mediadownloader.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.jdom.mediadownloader.services.EmailService;
-import com.jdom.util.email.Email;
+import com.jdom.mediadownloader.domain.Series;
 
-public class MockEmailService implements EmailService {
+/**
+ * @author djohnson
+ *
+ */
+public interface SeriesNotifierService {
 
-	public static MockEmailService instance;
-
-	private final List<Email> sentEmails = new ArrayList<Email>();
-
-	public MockEmailService() {
-		instance = this;
-	}
-
-	@Override
-	public void email(Email email) {
-		sentEmails.add(email);
-	}
-
-	public List<Email> getSentEmails() {
-		return sentEmails;
-	}
+	public abstract void sendEmails(List<Series> seriesList);
 
 }

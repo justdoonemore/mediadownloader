@@ -32,16 +32,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.ApplicationContextAware;
 
 import com.jdom.mediadownloader.MediaDownloader;
 import com.jdom.mediadownloader.domain.Series;
 import com.jdom.mediadownloader.domain.SeriesNotification;
 import com.jdom.mediadownloader.domain.User;
 import com.jdom.mediadownloader.services.ConfigurationManagerService;
+import com.jdom.mediadownloader.services.DasFactory;
 import com.jdom.mediadownloader.services.SeriesDASService;
 import com.jdom.mediadownloader.services.UserDASService;
 import com.jdom.services.series.download.util.SeriesDownloadUtil;
-import com.jdom.services.util.ServiceLocator;
 import com.jdom.util.email.Email;
 import com.jdom.util.properties.PropertiesUtil;
 import com.jdom.util.time.TimeUtil;
@@ -65,6 +66,8 @@ public class BlackBoxTest {
 
 	private ConfigurationManagerService configurationManager;
 
+	private DasFactory dasFactory;
+
 	@BeforeClass
 	public static void staticSetUp() {
 		createIntegrationTestPropertiesFile();
@@ -80,7 +83,9 @@ public class BlackBoxTest {
 
 		MediaDownloader.initializeContext();
 
-		configurationManager = ServiceLocator.getConfigurationManager();
+		configurationManager = BlackBoxTest
+				.getService(ConfigurationManagerService.class);
+		dasFactory = BlackBoxTest.getService(DasFactory.class);
 
 		createRequiredDirectories();
 
@@ -100,6 +105,15 @@ public class BlackBoxTest {
 		assertEquals(
 				"Expected the database to reflect the new episode to search for!",
 				8, getSimpsonsEpisode().getEpisode());
+	}
+
+	@Test
+	public void removesSeriesDownloadInQueueForSuccessfulDownload() {
+		startMediaDownloader();
+
+		assertFalse(
+				"The SeriesDownload should have been removed from the queue!",
+				SeriesDownloadUtil.containsSeries(simpsonsSeries));
 	}
 
 	@Test
@@ -197,8 +211,7 @@ public class BlackBoxTest {
 
 		startMediaDownloader();
 
-		MockEmailService emailerService = (MockEmailService) ServiceLocator
-				.getEmailerService();
+		MockEmailService emailerService = MockEmailService.instance;
 		List<Email> sentEmails = emailerService.getSentEmails();
 
 		// Check that an email was sent
@@ -239,6 +252,35 @@ public class BlackBoxTest {
 						+ "]!", expectedFile.isFile());
 	}
 
+	private static void createIntegrationTestPropertiesFile() {
+		try {
+			String propertiesFileTemplate = IOUtils.toString(BlackBoxTest.class
+					.getResourceAsStream("/" + PROPERTIES_FILE_NAME));
+			// Have the properties file reference what will be the test
+			// directory for each run
+			propertiesFileTemplate = propertiesFileTemplate.replaceAll(
+					"@BASE.TEST.DIR@",
+					TestUtil.setupTestClassDir(BlackBoxTest.class)
+							.getAbsolutePath());
+
+			FileUtils.write(propertiesFile, propertiesFileTemplate);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Allows retrieving a service implementation by using an
+	 * {@link ApplicationContextAware} mock component.
+	 * 
+	 * @param serviceInterface
+	 *            the interface
+	 * @return the implementation class
+	 */
+	private static <T> T getService(Class<T> serviceInterface) {
+		return MockNzbDownloader.context.getBean(serviceInterface);
+	}
+
 	/**
 	 * Writes a movie file out to a folder with the specified name in the
 	 * downloaded directory.
@@ -269,40 +311,23 @@ public class BlackBoxTest {
 	}
 
 	private void loadDatabase() {
-		SeriesDASService seriesDas = ServiceLocator.getSeriesDAS();
+		SeriesDASService seriesDas = dasFactory.getSeriesDAS();
 		seriesDas.addObject(simpsonsSeries);
 		seriesDas.addObject(raisingHopeSeries);
 
-		UserDASService userDas = ServiceLocator.getUserDAS();
+		UserDASService userDas = dasFactory.getUserDAS();
 		userDas.addObject(user);
 
 		SeriesNotification notification = new SeriesNotification(user,
 				raisingHopeSeries);
-		ServiceLocator.getSeriesNotificationDAS().addObject(notification);
+		dasFactory.getSeriesNotificationDAS().addObject(notification);
 	}
 
 	private void startMediaDownloader() {
 		MediaDownloader.main(new String[] { propertiesFile.getAbsolutePath() });
 	}
 
-	private static void createIntegrationTestPropertiesFile() {
-		try {
-			String propertiesFileTemplate = IOUtils.toString(BlackBoxTest.class
-					.getResourceAsStream("/" + PROPERTIES_FILE_NAME));
-			// Have the properties file reference what will be the test
-			// directory for each run
-			propertiesFileTemplate = propertiesFileTemplate.replaceAll(
-					"@BASE.TEST.DIR@",
-					TestUtil.setupTestClassDir(BlackBoxTest.class)
-							.getAbsolutePath());
-
-			FileUtils.write(propertiesFile, propertiesFileTemplate);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
 	private Series getSimpsonsEpisode() {
-		return ServiceLocator.getSeriesDAS().getSeriesByName("The Simpsons");
+		return dasFactory.getSeriesDAS().getSeriesByName("The Simpsons");
 	}
 }

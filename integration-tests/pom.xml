@@ -4,26 +4,34 @@
 	<parent>
 		<groupId>com.jdom</groupId>
 		<artifactId>mediadownloader</artifactId>
-		<version>0.0.2</version>
+		<version>0.0.3</version>
 	</parent>
 	<artifactId>integration-tests</artifactId>
 	<packaging>jar</packaging>
 
-	<properties>
-		<hsqldb.version>2.2.8</hsqldb.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>mediadownloader.jar</artifactId>
+			<artifactId>mediadownloader.core</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.jdom</groupId>
+			<artifactId>util.time</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
-			<version>${hsqldb.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

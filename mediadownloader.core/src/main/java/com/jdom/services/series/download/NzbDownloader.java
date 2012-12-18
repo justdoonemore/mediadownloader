@@ -14,31 +14,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jdom.tvshowdownloader.integration;
+package com.jdom.services.series.download;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
-import com.jdom.mediadownloader.services.EmailService;
-import com.jdom.util.email.Email;
+public interface NzbDownloader {
 
-public class MockEmailService implements EmailService {
+	/**
+	 * Download the actual NZBs.
+	 */
+	void downloadNzbs(Collection<SeriesDownload> downloads);
 
-	public static MockEmailService instance;
-
-	private final List<Email> sentEmails = new ArrayList<Email>();
-
-	public MockEmailService() {
-		instance = this;
-	}
-
-	@Override
-	public void email(Email email) {
-		sentEmails.add(email);
-	}
-
-	public List<Email> getSentEmails() {
-		return sentEmails;
-	}
+	/**
+	 * Processes downloaded items.
+	 */
+	void processDownloadedItems();
 
 }
