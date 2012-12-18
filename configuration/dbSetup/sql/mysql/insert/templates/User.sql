@@ -1,3 +1,3 @@
 -- Insert ${USERS.TABLE} table data
-${INSERT.STATEMENT} `${MEDIASERVER.SCHEMA}`.`${USERS.TABLE}` (`name`, `password`, `roles`, `emailaddress`) VALUES ('@VALUE@', '@VALUE@', '@VALUE@', '@VALUE@');
+${INSERT.STATEMENT} `${MEDIADOWNLOADER.SCHEMA}`.`${USERS.TABLE}` (`name`, `emailaddress`) VALUES ('@VALUE@', '@VALUE@');
 

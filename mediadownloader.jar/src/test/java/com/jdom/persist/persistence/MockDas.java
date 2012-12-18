@@ -15,8 +15,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */package com.jdom.persist.persistence;
 
+import com.jdom.mediadownloader.domain.AbstractEntity;
 import com.jdom.persist.persistence.AbstractDAS;
-import com.jdom.tvshowdownloader.domain.AbstractEntity;
 
 public class MockDas extends
 		AbstractDAS<com.jdom.persist.persistence.MockDas.MockEntity> {

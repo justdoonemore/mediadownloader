@@ -15,9 +15,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */package com.jdom.services.series.download.util;
 
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.services.util.ServiceLocator;
-import com.jdom.tvshowdownloader.domain.Series;
-import com.jdom.tvshowdownloader.ejb.ConfigurationManagerService;
 import com.jdom.util.time.TimeConstants;
 
 public final class SeriesDownloadUtil {

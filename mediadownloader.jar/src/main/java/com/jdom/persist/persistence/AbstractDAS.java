@@ -13,9 +13,11 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.persist.persistence;
+ */
+package com.jdom.persist.persistence;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,22 +37,8 @@ public abstract class AbstractDAS<T extends Comparable<T>> implements
 	@PersistenceContext
 	protected EntityManager em;
 
-	private TransactionStrategy transactionStrategy = new JeeTransactionStrategy();
-
 	protected AbstractDAS() {
 
-	}
-
-	/**
-	 * This constructor is only used when passing in an entity manager, at this
-	 * point only unit testing.
-	 * 
-	 * @param em
-	 *            the entity manager
-	 */
-	protected AbstractDAS(EntityManager em) {
-		this.em = em;
-		this.transactionStrategy = new JseTransactionStrategy(this.em);
 	}
 
 	/**
@@ -74,9 +62,12 @@ public abstract class AbstractDAS<T extends Comparable<T>> implements
 	protected T findByUniqueName(String name) {
 		T entity = null;
 
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put(":name", name);
+
 		List<T> resultsWithName = runQuery("SELECT c FROM "
-				+ getDASClass().getSimpleName() + " c where c.name = '" + name
-				+ "'");
+				+ getDASClass().getSimpleName() + " c where c.name = :name",
+				params);
 
 		if (resultsWithName.size() > 0) {
 			entity = resultsWithName.get(0);
@@ -124,20 +115,14 @@ public abstract class AbstractDAS<T extends Comparable<T>> implements
 	public boolean addObject(T object) {
 		boolean added = false;
 
-		beginTransaction();
-
 		try {
 			em.persist(object);
 
 			em.flush();
 
-			commitTransaction();
-
 			added = true;
 
 		} catch (Exception e) {
-			rollbackTransaction();
-
 			LOG.error("Exception while adding object.", e);
 		}
 
@@ -190,6 +175,13 @@ public abstract class AbstractDAS<T extends Comparable<T>> implements
 		return result;
 	}
 
+	@Override
+	@Transactional
+	public void deleteAll() {
+		em.createQuery("DELETE FROM " + getDASClass().getSimpleName())
+				.executeUpdate();
+	}
+
 	protected List<T> runQuery(String queryString) {
 		return runQuery(queryString, -1);
 	}
@@ -238,17 +230,4 @@ public abstract class AbstractDAS<T extends Comparable<T>> implements
 	}
 
 	protected abstract Class<T> getDASClass();
-
-	protected void beginTransaction() {
-		this.transactionStrategy.beginTransaction();
-	}
-
-	protected void commitTransaction() {
-		this.transactionStrategy.commitTransaction();
-	}
-
-	protected void rollbackTransaction() {
-		this.transactionStrategy.rollbackTransaction();
-	}
-
 }

@@ -24,8 +24,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.jdom.junit.utils.FileContentsDownload;
+import com.jdom.mediadownloader.domain.Series;
 import com.jdom.services.series.util.NzbIndexRssFeedLinkFinder;
-import com.jdom.tvshowdownloader.domain.Series;
 import com.jdom.util.html.exception.MalformedURLException;
 
 public class NzbIndexRssFeedLinkFinderTest extends

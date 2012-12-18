@@ -23,77 +23,74 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.jdom.mediadownloader.MediaDownloader;
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.mediadownloader.domain.SeriesNotification;
+import com.jdom.mediadownloader.domain.User;
+import com.jdom.mediadownloader.services.ConfigurationManagerService;
+import com.jdom.mediadownloader.services.SeriesDASService;
+import com.jdom.mediadownloader.services.UserDASService;
 import com.jdom.services.series.download.util.SeriesDownloadUtil;
 import com.jdom.services.util.ServiceLocator;
-import com.jdom.tvshowdownloader.domain.Series;
-import com.jdom.tvshowdownloader.domain.SeriesDownload;
-import com.jdom.tvshowdownloader.ejb.ConfigurationManager;
-import com.jdom.tvshowdownloader.ejb.SeriesDASService;
-import com.jdom.tvshowdownloader.ejb.SeriesDownloadDASService;
-import com.jdom.tvshowdownloader.sar.MediaDownloader;
+import com.jdom.util.email.Email;
 import com.jdom.util.properties.PropertiesUtil;
 import com.jdom.util.time.TimeUtil;
 import com.jdom.util.time.TimeUtilTest;
 
 public class BlackBoxTest {
 
+	private static final File TEST_CONFIGURATION_FILE_DIRECTORY = TestUtil
+			.setupTestClassDir(MediaDownloader.class);
+
 	private static final String PROPERTIES_FILE_NAME = "integration_test.properties";
 
-	private final File baseTestDir = TestUtil
-			.setupTestClassDir(BlackBoxTest.class);
+	private static final File propertiesFile = new File(
+			TEST_CONFIGURATION_FILE_DIRECTORY, PROPERTIES_FILE_NAME);
 
-	private final File propertiesFile = new File(baseTestDir,
-			PROPERTIES_FILE_NAME);
+	private final User user = new User("someUser", "someEmail@blah.com");
 
-	private ConfigurationManager configurationManager;
+	private final Series simpsonsSeries = new Series("The Simpsons", 24, 5);
 
-	private MockNzbDownloader nzbDownloader;
+	private final Series raisingHopeSeries = new Series("Raising Hope", 3, 9);
 
-	@Before
-	public void setUp() {
+	private ConfigurationManagerService configurationManager;
+
+	@BeforeClass
+	public static void staticSetUp() {
 		createIntegrationTestPropertiesFile();
 
 		System.getProperties().putAll(
 				PropertiesUtil.readPropertiesFile(propertiesFile));
+	}
+
+	@Before
+	public void setUp() {
+		// Clean test directory each time
+		TestUtil.setupTestClassDir(BlackBoxTest.class);
 
 		MediaDownloader.initializeContext();
 
-		// Must be after the properties are set
-		configurationManager = new ConfigurationManager();
+		configurationManager = ServiceLocator.getConfigurationManager();
 
 		createRequiredDirectories();
 
 		// Dependent services
-		startNzbDownloader();
-
 		loadDatabase();
 	}
 
 	@After
 	public void tearDown() throws SQLException {
-		stopNzbDownloader();
-
-		// TODO: How can cleaning the database be made better?
-		SeriesDASService seriesDas = ServiceLocator.getSeriesDAS();
-		List<Series> all = seriesDas.getAll();
-		for (Series series : all) {
-			seriesDas.deleteObject(series);
-		}
-
-		SeriesDownloadDASService seriesDownloadDas = ServiceLocator
-				.getSeriesDownloadDAS();
-		List<SeriesDownload> all2 = seriesDownloadDas.getAll();
-		for (SeriesDownload series : all2) {
-			seriesDownloadDas.deleteObject(series);
-		}
+		MediaDownloader.closeContext();
 	}
 
 	@Test
@@ -150,8 +147,6 @@ public class BlackBoxTest {
 
 	@Test
 	public void doesNotDownloadEpisodesAlreadyInDownloadQueue() {
-		// TODO: Can we retrieve the implementation service some other way,
-		// maybe via ServiceLocator?
 		SeriesDownloadUtil.addSeries(new Series("The Simpsons", 24, 7));
 
 		startMediaDownloader();
@@ -198,6 +193,30 @@ public class BlackBoxTest {
 	}
 
 	@Test
+	public void sendsEmailForSeriesSignedUpForNotification() {
+
+		startMediaDownloader();
+
+		MockEmailService emailerService = (MockEmailService) ServiceLocator
+				.getEmailerService();
+		List<Email> sentEmails = emailerService.getSentEmails();
+
+		// Check that an email was sent
+		assertEquals("Expected one email to have been sent", 1,
+				sentEmails.size());
+		Email email = sentEmails.iterator().next();
+
+		// Check the destination email addresses
+		Collection<String> emailAddresses = email.getEmailAddresses();
+		assertEquals("Expected one email address for the destination", 1,
+				emailAddresses.size());
+		assertEquals(user.getEmailAddress(), emailAddresses.iterator().next());
+
+		// Implicitly tests that no emails were sent regarding Simpsons
+		// downloads
+	}
+
+	@Test
 	public void movesMovieDownloadsToMoviesArchiveDir() {
 		File someMovieFile = placeDownloadedMovie("someMovie");
 
@@ -219,8 +238,6 @@ public class BlackBoxTest {
 				"Did not find expected file [" + expectedFile.getAbsolutePath()
 						+ "]!", expectedFile.isFile());
 	}
-
-	// TODO: Tests for emails being sent?
 
 	/**
 	 * Writes a movie file out to a folder with the specified name in the
@@ -251,30 +268,33 @@ public class BlackBoxTest {
 		configurationManager.getArchivedMoviesDirectory().mkdirs();
 	}
 
-	private void startNzbDownloader() {
-		nzbDownloader = new MockNzbDownloader(configurationManager);
-		nzbDownloader.start();
-	}
-
-	private void stopNzbDownloader() {
-		nzbDownloader.stop = true;
-	}
-
 	private void loadDatabase() {
 		SeriesDASService seriesDas = ServiceLocator.getSeriesDAS();
-		seriesDas.addObject(new Series("The Simpsons", 24, 5));
+		seriesDas.addObject(simpsonsSeries);
+		seriesDas.addObject(raisingHopeSeries);
+
+		UserDASService userDas = ServiceLocator.getUserDAS();
+		userDas.addObject(user);
+
+		SeriesNotification notification = new SeriesNotification(user,
+				raisingHopeSeries);
+		ServiceLocator.getSeriesNotificationDAS().addObject(notification);
 	}
 
 	private void startMediaDownloader() {
 		MediaDownloader.main(new String[] { propertiesFile.getAbsolutePath() });
 	}
 
-	private void createIntegrationTestPropertiesFile() {
+	private static void createIntegrationTestPropertiesFile() {
 		try {
 			String propertiesFileTemplate = IOUtils.toString(BlackBoxTest.class
 					.getResourceAsStream("/" + PROPERTIES_FILE_NAME));
+			// Have the properties file reference what will be the test
+			// directory for each run
 			propertiesFileTemplate = propertiesFileTemplate.replaceAll(
-					"@BASE.TEST.DIR@", baseTestDir.getAbsolutePath());
+					"@BASE.TEST.DIR@",
+					TestUtil.setupTestClassDir(BlackBoxTest.class)
+							.getAbsolutePath());
 
 			FileUtils.write(propertiesFile, propertiesFileTemplate);
 		} catch (IOException e) {

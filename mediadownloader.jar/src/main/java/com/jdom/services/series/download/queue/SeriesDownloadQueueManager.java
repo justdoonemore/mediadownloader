@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */package com.jdom.services.series.download.queue;
 
-import com.jdom.tvshowdownloader.domain.Series;
+import com.jdom.mediadownloader.domain.Series;
 
 public interface SeriesDownloadQueueManager {
 

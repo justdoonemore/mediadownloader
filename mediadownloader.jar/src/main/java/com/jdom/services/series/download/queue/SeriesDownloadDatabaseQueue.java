@@ -20,10 +20,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.mediadownloader.domain.SeriesDownload;
+import com.jdom.mediadownloader.services.SeriesDownloadDASService;
 import com.jdom.services.util.ServiceLocator;
-import com.jdom.tvshowdownloader.domain.Series;
-import com.jdom.tvshowdownloader.domain.SeriesDownload;
-import com.jdom.tvshowdownloader.ejb.SeriesDownloadDASService;
 import com.jdom.util.time.TimeUtil;
 
 /**

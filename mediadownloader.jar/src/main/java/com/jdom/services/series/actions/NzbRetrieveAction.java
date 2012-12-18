@@ -24,13 +24,13 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.mediadownloader.domain.SeriesEpisodeComparator;
+import com.jdom.mediadownloader.services.ConfigurationManagerService;
+import com.jdom.mediadownloader.services.SeriesDASService;
 import com.jdom.services.series.download.util.SeriesDownloadUtil;
 import com.jdom.services.series.util.SeriesUtil;
 import com.jdom.services.util.ServiceLocator;
-import com.jdom.tvshowdownloader.domain.Series;
-import com.jdom.tvshowdownloader.domain.SeriesEpisodeComparator;
-import com.jdom.tvshowdownloader.ejb.ConfigurationManagerService;
-import com.jdom.tvshowdownloader.ejb.SeriesDASService;
 import com.jdom.util.compare.CompareUtil;
 import com.jdom.util.file.FileUtils;
 import com.jdom.util.file.FileWrapper;

@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.jdom.junit.utils.TestUtil;
-import com.jdom.tvshowdownloader.domain.Series;
+import com.jdom.mediadownloader.domain.Series;
 import com.jdom.util.time.TimeUtil;
 
 public class NzbRetrieveActionTest {

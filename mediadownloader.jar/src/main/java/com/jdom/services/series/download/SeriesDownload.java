@@ -20,7 +20,7 @@ import java.net.URL;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import com.jdom.tvshowdownloader.domain.Series;
+import com.jdom.mediadownloader.domain.Series;
 
 /**
  * Helper class which associates a URL for a specific season/episode to a

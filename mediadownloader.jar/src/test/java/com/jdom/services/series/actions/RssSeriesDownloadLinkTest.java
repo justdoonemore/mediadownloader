@@ -21,9 +21,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.jdom.mediadownloader.domain.Series;
 import com.jdom.services.series.download.RssLink;
 import com.jdom.services.series.download.RssSeriesDownloadLink;
-import com.jdom.tvshowdownloader.domain.Series;
 
 public class RssSeriesDownloadLinkTest {
 

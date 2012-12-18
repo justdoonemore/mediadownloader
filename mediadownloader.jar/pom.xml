@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>mediadownloader</artifactId>
 		<groupId>com.jdom</groupId>
-		<version>0.0.1</version>
+		<version>0.0.2</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mediadownloader.jar</artifactId>
@@ -33,7 +33,7 @@
 								</transformer>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.jdom.tvshowdownloader.sar.MediaDownloader</mainClass>
+									<mainClass>com.jdom.mediadownloader.MediaDownloader</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

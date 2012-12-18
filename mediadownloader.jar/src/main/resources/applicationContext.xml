@@ -37,11 +37,10 @@ http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<bean id="com.jdom.tvshowdownloader.ejb.UrlDownloadService"
-		class="${urlDownloadService.impl}" />
+	<bean id="com.jdom.mediadownloader.services.UrlDownloadService" class="${urlDownloadService.impl}" />
 
 	<bean id="downloadNzb" class="com.jdom.services.series.actions.DownloadNzb">
-		<constructor-arg ref="com.jdom.tvshowdownloader.ejb.UrlDownloadService" />
+		<constructor-arg ref="com.jdom.mediadownloader.services.UrlDownloadService" />
 	</bean>
 
 	<bean id="seriesDownloadProcessor"
@@ -49,42 +48,47 @@ http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 		<constructor-arg ref="downloadNzb" />
 	</bean>
 
-	<bean id="mediaDownloader" class="com.jdom.tvshowdownloader.sar.MediaDownloader">
+	<bean id="mediaDownloader" class="com.jdom.mediadownloader.MediaDownloader">
 		<constructor-arg ref="seriesDownloadProcessor" />
+		<constructor-arg ref="nzbDownloader" />
 	</bean>
 
-	<bean id="nzbLinkFinder"
-		class="com.jdom.services.series.util.NzbIndexRssFeedLinkFinder">
-		<constructor-arg ref="com.jdom.tvshowdownloader.ejb.UrlDownloadService" />
+	<bean id="nzbLinkFinder" class="com.jdom.services.series.util.NzbIndexRssFeedLinkFinder">
+		<constructor-arg ref="com.jdom.mediadownloader.services.UrlDownloadService" />
 	</bean>
 
 	<bean id="nzbRetrieveAction" class="com.jdom.services.series.actions.NzbRetrieveAction" />
 
-	<bean id="seriesDownloadUpdater"
-		class="com.jdom.services.series.download.SeriesDownloadUpdater"
+	<bean id="seriesDownloadUpdater" class="com.jdom.services.series.download.SeriesDownloadUpdater"
 		factory-method="getInstance">
 		<property name="nzbRetrieveAction" ref="nzbRetrieveAction" />
 	</bean>
 
 
-	<bean id="com.jdom.tvshowdownloader.ejb.ConfigurationManagerService"
-		class="com.jdom.tvshowdownloader.ejb.ConfigurationManager">
+	<bean id="com.jdom.mediadownloader.services.ConfigurationManagerService"
+		class="com.jdom.mediadownloader.services.ConfigurationManager">
 		<property name="seriesLinkFinder" ref="nzbLinkFinder" />
+	</bean>
+	
+	<bean id="nzbDownloader" class="${nzbDownloader.impl}">
+		<constructor-arg ref="com.jdom.mediadownloader.services.ConfigurationManagerService" />
 	</bean>
 
 	<bean id="serviceLocator" class="com.jdom.services.util.ServiceLocator" />
 
-	<bean id="com.jdom.tvshowdownloader.ejb.SeriesDASService" class="com.jdom.tvshowdownloader.ejb.SeriesDAS" />
+	<bean id="com.jdom.mediadownloader.services.SeriesDASService" class="com.jdom.mediadownloader.services.SeriesDAS" />
 
-	<bean id="com.jdom.tvshowdownloader.ejb.SeriesNotificationDASService"
-		class="com.jdom.tvshowdownloader.ejb.SeriesNotificationDAS" />
+	<bean id="com.jdom.mediadownloader.services.SeriesNotificationDASService"
+		class="com.jdom.mediadownloader.services.SeriesNotificationDAS" />
 
-	<bean id="com.jdom.tvshowdownloader.ejb.UserDASService" class="com.jdom.tvshowdownloader.ejb.UserDAS" />
+	<bean id="com.jdom.mediadownloader.services.UserDASService" class="com.jdom.mediadownloader.services.UserDAS" />
 
-	<bean id="com.jdom.tvshowdownloader.ejb.SeriesDownloadDASService"
-		class="com.jdom.tvshowdownloader.ejb.SeriesDownloadDAS" />
+	<bean id="com.jdom.mediadownloader.services.SeriesDownloadDASService"
+		class="com.jdom.mediadownloader.services.SeriesDownloadDAS" />
 
 	<bean id="seriesDownloadQueueManager"
 		class="com.jdom.services.series.download.queue.SeriesDownloadDatabaseQueue" />
+
+	<bean id="emailService" class="${emailService.impl}" />
 
 </beans>

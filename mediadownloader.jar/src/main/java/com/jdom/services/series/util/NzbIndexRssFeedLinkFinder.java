@@ -13,7 +13,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.services.series.util;
+ */
+package com.jdom.services.series.util;
 
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -21,10 +22,10 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.mediadownloader.services.ConfigurationManagerService;
+import com.jdom.mediadownloader.services.UrlDownloadService;
 import com.jdom.services.util.ServiceLocator;
-import com.jdom.tvshowdownloader.domain.Series;
-import com.jdom.tvshowdownloader.ejb.ConfigurationManagerService;
-import com.jdom.tvshowdownloader.ejb.UrlDownloadService;
 import com.jdom.util.regex.RegexMatch;
 import com.jdom.util.regex.RegexUtil;
 import com.jdom.util.time.TimeConstants;

@@ -19,8 +19,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.jdom.mediadownloader.domain.Series;
 import com.jdom.services.series.util.SeriesUtil;
-import com.jdom.tvshowdownloader.domain.Series;
 
 public class SeriesUtilTest {
 

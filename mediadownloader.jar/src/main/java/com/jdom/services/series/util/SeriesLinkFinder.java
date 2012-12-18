@@ -17,7 +17,7 @@
 
 import java.util.Collection;
 
-import com.jdom.tvshowdownloader.domain.Series;
+import com.jdom.mediadownloader.domain.Series;
 
 public interface SeriesLinkFinder {
 

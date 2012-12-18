@@ -21,12 +21,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.services.series.download.SeriesDownload;
 import com.jdom.services.series.download.SeriesDownloadFinder;
 import com.jdom.services.series.util.SeriesLinkFinder;
 import com.jdom.services.util.ServiceLocator;
-import com.jdom.tvshowdownloader.domain.Series;
-import com.jdom.tvshowdownloader.ejb.ConfigurationManagerService;
 
 public class FindLinksForSeries {
 

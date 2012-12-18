@@ -13,18 +13,20 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.services.util;
+ */
+package com.jdom.services.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.jdom.mediadownloader.services.ConfigurationManagerService;
+import com.jdom.mediadownloader.services.EmailService;
+import com.jdom.mediadownloader.services.SeriesDASService;
+import com.jdom.mediadownloader.services.SeriesDownloadDASService;
+import com.jdom.mediadownloader.services.SeriesNotificationDASService;
+import com.jdom.mediadownloader.services.UserDASService;
 import com.jdom.services.series.download.queue.SeriesDownloadQueueManager;
-import com.jdom.tvshowdownloader.ejb.ConfigurationManagerService;
-import com.jdom.tvshowdownloader.ejb.SeriesDASService;
-import com.jdom.tvshowdownloader.ejb.SeriesDownloadDASService;
-import com.jdom.tvshowdownloader.ejb.SeriesNotificationDASService;
-import com.jdom.tvshowdownloader.ejb.UserDASService;
 
 public class ServiceLocator implements ApplicationContextAware {
 
@@ -87,5 +89,9 @@ public class ServiceLocator implements ApplicationContextAware {
 
 	public static SeriesDownloadQueueManager getSeriesDownloadQueueManager() {
 		return ctx.getBean(SeriesDownloadQueueManager.class);
+	}
+
+	public static EmailService getEmailerService() {
+		return ctx.getBean(EmailService.class);
 	}
 }

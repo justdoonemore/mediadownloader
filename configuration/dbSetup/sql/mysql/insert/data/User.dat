@@ -1,1 +1,1 @@
-${ADMIN.USER};;${ADMIN.USER.PASSWORD};;${ADMIN.USER.ROLE};;<enter your email>
+${admin.user};;${admin.email}

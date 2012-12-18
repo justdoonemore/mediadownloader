@@ -18,7 +18,7 @@
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.jdom.tvshowdownloader.domain.Series;
+import com.jdom.mediadownloader.domain.Series;
 
 public final class SeriesUtil {
 

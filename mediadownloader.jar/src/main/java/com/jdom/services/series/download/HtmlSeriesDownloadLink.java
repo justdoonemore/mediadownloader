@@ -17,8 +17,8 @@
 
 import java.util.Random;
 
+import com.jdom.mediadownloader.domain.Series;
 import com.jdom.services.series.util.SeriesUtil;
-import com.jdom.tvshowdownloader.domain.Series;
 import com.jdom.util.html.HtmlLink;
 
 public class HtmlSeriesDownloadLink implements SeriesDownloadLink {

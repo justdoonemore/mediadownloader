@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */package com.jdom.junit.utils;
 
-import com.jdom.tvshowdownloader.ejb.UrlDownloadService;
+import com.jdom.mediadownloader.services.UrlDownloadService;
 import com.jdom.util.file.FileUtils;
 
 public class FileContentsDownload implements UrlDownloadService {

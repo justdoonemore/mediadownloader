@@ -21,8 +21,8 @@ import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 
-import com.jdom.tvshowdownloader.domain.Series;
-import com.jdom.tvshowdownloader.ejb.UrlDownloadService;
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.mediadownloader.services.UrlDownloadService;
 import com.jdom.util.regex.RegexMatch;
 import com.jdom.util.regex.RegexUtil;
 import com.jdom.util.string.StringUtil;

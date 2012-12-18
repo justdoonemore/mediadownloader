@@ -18,11 +18,11 @@
 import java.util.Collection;
 import java.util.List;
 
+import com.jdom.mediadownloader.domain.Series;
 import com.jdom.services.series.actions.DownloadNzb;
 import com.jdom.services.series.actions.FindLinksForSeries;
 import com.jdom.services.series.download.util.SeriesDownloadUtil;
 import com.jdom.services.util.ServiceLocator;
-import com.jdom.tvshowdownloader.domain.Series;
 
 public final class SeriesDownloadProcessor {
 

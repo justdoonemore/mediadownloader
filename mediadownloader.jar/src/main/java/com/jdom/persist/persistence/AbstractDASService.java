@@ -13,7 +13,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.persist.persistence;
+ */
+package com.jdom.persist.persistence;
 
 import java.util.List;
 
@@ -26,15 +27,17 @@ import java.util.List;
  *            The entity for this DAS
  */
 public interface AbstractDASService<T> {
-    public List<T> getAll();
+	List<T> getAll();
 
-    public List<T> getMostRecent(int maxNumberOfResults);
+	List<T> getMostRecent(int maxNumberOfResults);
 
-    public boolean updateObject(T object);
+	boolean updateObject(T object);
 
-    public boolean addObject(T object);
+	boolean addObject(T object);
 
-    public boolean deleteObject(T object);
+	boolean deleteObject(T object);
 
-    public T findObject(Object primaryKey);
+	T findObject(Object primaryKey);
+
+	void deleteAll();
 }

@@ -13,7 +13,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.services.series.actions;
+ */
+package com.jdom.services.series.actions;
 
 import java.io.File;
 import java.net.URL;
@@ -21,17 +22,18 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.mediadownloader.services.ConfigurationManagerService;
+import com.jdom.mediadownloader.services.UrlDownloadService;
 import com.jdom.services.series.download.SeriesDownload;
 import com.jdom.services.series.download.util.SeriesDownloadUtil;
 import com.jdom.services.util.ServiceLocator;
-import com.jdom.tvshowdownloader.domain.Series;
-import com.jdom.tvshowdownloader.ejb.ConfigurationManagerService;
-import com.jdom.tvshowdownloader.ejb.UrlDownloadService;
 import com.jdom.util.file.FileUtils;
 
 public class DownloadNzb {
 
-	private static final long SLEEP_TIME_BETWEEN_NZB_DOWNLOADS = 2000L;
+	private static final long SLEEP_TIME_BETWEEN_NZB_DOWNLOADS = Long.getLong(
+			"sleep.time.between.nzb.downloads", 2000L);
 	private static final Logger LOG = Logger.getLogger(DownloadNzb.class);
 
 	private final UrlDownloadService urlDownloadService;
@@ -88,15 +90,18 @@ public class DownloadNzb {
 						series);
 			}
 
-			try {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Sleeping for "
-							+ SLEEP_TIME_BETWEEN_NZB_DOWNLOADS
-							+ " ms until next download.");
+			if (SLEEP_TIME_BETWEEN_NZB_DOWNLOADS > 0) {
+				try {
+
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Sleeping for "
+								+ SLEEP_TIME_BETWEEN_NZB_DOWNLOADS
+								+ " ms until next download.");
+					}
+					Thread.sleep(SLEEP_TIME_BETWEEN_NZB_DOWNLOADS);
+				} catch (InterruptedException e) {
+					LOG.error("Exception while sleeping", e);
 				}
-				Thread.sleep(SLEEP_TIME_BETWEEN_NZB_DOWNLOADS);
-			} catch (InterruptedException e) {
-				LOG.error("Exception while sleeping", e);
 			}
 		}
 	}

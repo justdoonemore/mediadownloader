@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.jdom.tvshowdownloader.domain.Series;
+import com.jdom.mediadownloader.domain.Series;
 import com.jdom.util.time.TimeUtil;
 import com.jdom.util.time.TimeUtilTest;
 

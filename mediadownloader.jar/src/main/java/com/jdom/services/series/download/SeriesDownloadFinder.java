@@ -20,8 +20,8 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
+import com.jdom.mediadownloader.domain.Series;
 import com.jdom.services.series.util.SeriesLinkFinder;
-import com.jdom.tvshowdownloader.domain.Series;
 
 public class SeriesDownloadFinder {
 

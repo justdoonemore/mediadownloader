@@ -2,12 +2,12 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
-	<persistence-unit name="MEDIASERVER" transaction-type="RESOURCE_LOCAL">
+	<persistence-unit name="MEDIADOWNLOADER" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<class>com.jdom.tvshowdownloader.domain.Series</class>
-		<class>com.jdom.tvshowdownloader.domain.SeriesDownload</class>
-		<class>com.jdom.tvshowdownloader.domain.SeriesNotification</class>
-		<class>com.jdom.tvshowdownloader.domain.User</class>
+		<class>com.jdom.mediadownloader.domain.Series</class>
+		<class>com.jdom.mediadownloader.domain.SeriesDownload</class>
+		<class>com.jdom.mediadownloader.domain.SeriesNotification</class>
+		<class>com.jdom.mediadownloader.domain.User</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
@@ -20,12 +20,12 @@
 			<property name="hibernate.format_sql" value="false" />
 		</properties>
 	</persistence-unit>
-		<persistence-unit name="MEDIASERVER_INTEGRATION_TEST" transaction-type="RESOURCE_LOCAL">
+		<persistence-unit name="MEDIADOWNLOADER_INTEGRATION_TEST" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<class>com.jdom.tvshowdownloader.domain.Series</class>
-		<class>com.jdom.tvshowdownloader.domain.SeriesDownload</class>
-		<class>com.jdom.tvshowdownloader.domain.SeriesNotification</class>
-		<class>com.jdom.tvshowdownloader.domain.User</class>
+		<class>com.jdom.mediadownloader.domain.Series</class>
+		<class>com.jdom.mediadownloader.domain.SeriesDownload</class>
+		<class>com.jdom.mediadownloader.domain.SeriesNotification</class>
+		<class>com.jdom.mediadownloader.domain.User</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />

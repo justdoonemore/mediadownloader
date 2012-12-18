@@ -15,9 +15,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */package com.jdom.services.series.util;
 
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.mediadownloader.services.UrlDownloadService;
 import com.jdom.services.series.util.NzbIndexRssFeedLinkFinder;
-import com.jdom.tvshowdownloader.domain.Series;
-import com.jdom.tvshowdownloader.ejb.UrlDownloadService;
 
 public class MockNzbIndexRssFeedLinkFinder extends NzbIndexRssFeedLinkFinder {
 

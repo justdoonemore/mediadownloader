@@ -13,19 +13,20 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.services.series.actions;
+ */
+package com.jdom.services.series.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.jdom.services.series.SeriesService;
+import com.jdom.mediadownloader.domain.Series;
+import com.jdom.mediadownloader.domain.User;
+import com.jdom.mediadownloader.services.ConfigurationManagerService;
+import com.jdom.mediadownloader.services.EmailService;
+import com.jdom.mediadownloader.services.series.SeriesService;
 import com.jdom.services.util.ServiceLocator;
-import com.jdom.tvshowdownloader.domain.Series;
-import com.jdom.tvshowdownloader.domain.User;
-import com.jdom.tvshowdownloader.ejb.ConfigurationManagerService;
 import com.jdom.util.email.Email;
-import com.jdom.util.email.Emailer;
 
 public class SendEmailNotifications {
 
@@ -38,12 +39,17 @@ public class SendEmailNotifications {
 
 		// Construct email notifications per series
 		for (Series series : payload) {
-			emailsToSend.add(createEmail(series,
-					configurationManager.getTemplateEmail()));
+			Collection<User> usersToNotify = SeriesService
+					.getUsersToNotifyForSeries(series);
+			if (!usersToNotify.isEmpty()) {
+				emailsToSend.add(createEmail(series, usersToNotify,
+						configurationManager.getTemplateEmail()));
+			}
 		}
 
+		EmailService emailer = ServiceLocator.getEmailerService();
 		for (Email email : emailsToSend) {
-			Emailer.email(email);
+			emailer.email(email);
 		}
 	}
 
@@ -52,15 +58,14 @@ public class SendEmailNotifications {
 	 * 
 	 * @param series
 	 *            the series
+	 * @param usersToNotify
+	 *            the collection of users to notify
 	 * @param email
 	 *            the template email
 	 * @return the complete email object
 	 */
-	private Email createEmail(Series series, Email email) {
-		// Get all users to notify
-		Collection<User> usersToNotify = SeriesService
-				.getUsersToNotifyForSeries(series);
-
+	private Email createEmail(Series series, Collection<User> usersToNotify,
+			Email email) {
 		Collection<String> emailAddresses = new ArrayList<String>();
 
 		// Add all user notifiees address
