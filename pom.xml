@@ -4,12 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jdom</groupId>
 	<artifactId>mediadownloader</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<log4j.version>1.2.16</log4j.version>
-		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
 		<jdk.compliance.version>1.6</jdk.compliance.version>
 		<junit.version>4.10</junit.version>
 		<jmock.version>2.5.1</jmock.version>
@@ -24,8 +23,8 @@
 		<org.hibernate.version>4.1.9.Final</org.hibernate.version>
 		<org.hibernate.javax.persistence.version>1.0.1.Final</org.hibernate.javax.persistence.version>
 		<org.springframework.version>3.1.2.RELEASE</org.springframework.version>
-		<maven-sar-plugin.version>0.9</maven-sar-plugin.version>
-		<maven-ear-plugin.version>2.6</maven-ear-plugin.version>
+		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+		<maven.jar.plugin.version>2.3.2</maven.jar.plugin.version>
 	</properties>
 
 	<distributionManagement>
@@ -58,6 +57,7 @@
 		<module>mediadownloader.core</module>
 		<module>integration-tests</module>
 		<module>mediadownloader.executable</module>
+		<module>mediadownloader.series</module>
 	</modules>
 
 	<!-- Defines the standard versions of dependencies that should be used. 

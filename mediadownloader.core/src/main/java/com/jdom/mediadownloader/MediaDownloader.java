@@ -18,12 +18,17 @@ package com.jdom.mediadownloader;
 
 import java.io.File;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.jdom.services.series.download.SeriesDownloadProcessor;
+import com.jdom.mediadownloader.ApplicationLock.LockException;
+import com.jdom.mediadownloader.api.MediaProcessor;
+import com.jdom.mediadownloader.api.MediaProcessorRegistry;
 import com.jdom.util.properties.PropertiesUtil;
 
 public class MediaDownloader {
+
+	private static final Logger LOG = Logger.getLogger(MediaDownloader.class);
 
 	private static ClassPathXmlApplicationContext ctx;
 
@@ -34,6 +39,7 @@ public class MediaDownloader {
 		}
 
 		File file = new File(args[0]);
+
 		System.getProperties().putAll(PropertiesUtil.readPropertiesFile(file));
 
 		initializeContext();
@@ -45,7 +51,10 @@ public class MediaDownloader {
 	public static void initializeContext() {
 		if (ctx == null) {
 			ctx = new ClassPathXmlApplicationContext(new String[] {
-					"/applicationContext.xml", "/db-beans.xml" });
+					"/mediadownloader-core.xml",
+					"/mediadownloader-core-db.xml",
+					"/mediadownloader-series.xml",
+					"/mediadownloader-series-db.xml" });
 		}
 	}
 
@@ -56,13 +65,34 @@ public class MediaDownloader {
 		}
 	}
 
-	private final SeriesDownloadProcessor downloadProcessor;
+	private final MediaProcessorRegistry mediaProcessorRegistry;
 
-	private MediaDownloader(SeriesDownloadProcessor downloadProcessor) {
-		this.downloadProcessor = downloadProcessor;
+	private final ApplicationLock applicationLock;
+
+	private MediaDownloader(ApplicationLock applicationLock,
+			MediaProcessorRegistry mediaProcessorRegistry) {
+		this.applicationLock = applicationLock;
+		this.mediaProcessorRegistry = mediaProcessorRegistry;
 	}
 
 	private void processDownloads() {
-		this.downloadProcessor.process();
+		try {
+			if (applicationLock.tryLock()) {
+				for (MediaProcessor processor : mediaProcessorRegistry
+						.getRegistered()) {
+					try {
+						processor.process();
+					} catch (Exception e) {
+						LOG.error("Exception while processing.", e);
+					}
+				}
+			} else {
+				LOG.warn("Unable to acquire the file lock, does the cron timer need to be lengthened?");
+			}
+		} catch (LockException e) {
+			LOG.error("Unable to acquire the lock", e);
+		} finally {
+			applicationLock.unlock();
+		}
 	}
 }

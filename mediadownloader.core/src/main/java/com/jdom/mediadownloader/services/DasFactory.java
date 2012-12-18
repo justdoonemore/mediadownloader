@@ -18,16 +18,10 @@ package com.jdom.mediadownloader.services;
 
 /**
  * @author djohnson
- *
+ * 
  */
 public interface DasFactory {
 
-	SeriesDASService getSeriesDAS();
-
 	UserDASService getUserDAS();
-
-	SeriesNotificationDASService getSeriesNotificationDAS();
-
-	SeriesDownloadDASService getSeriesDownloadDAS();
 
 }

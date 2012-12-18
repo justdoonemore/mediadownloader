@@ -35,14 +35,14 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContextAware;
 
 import com.jdom.mediadownloader.MediaDownloader;
-import com.jdom.mediadownloader.domain.Series;
-import com.jdom.mediadownloader.domain.SeriesNotification;
 import com.jdom.mediadownloader.domain.User;
+import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.domain.SeriesNotification;
+import com.jdom.mediadownloader.series.download.util.SeriesDownloadUtil;
+import com.jdom.mediadownloader.series.services.SeriesDasFactory;
 import com.jdom.mediadownloader.services.ConfigurationManagerService;
-import com.jdom.mediadownloader.services.DasFactory;
 import com.jdom.mediadownloader.services.SeriesDASService;
 import com.jdom.mediadownloader.services.UserDASService;
-import com.jdom.services.series.download.util.SeriesDownloadUtil;
 import com.jdom.util.email.Email;
 import com.jdom.util.properties.PropertiesUtil;
 import com.jdom.util.time.TimeUtil;
@@ -66,7 +66,7 @@ public class BlackBoxTest {
 
 	private ConfigurationManagerService configurationManager;
 
-	private DasFactory dasFactory;
+	private SeriesDasFactory dasFactory;
 
 	@BeforeClass
 	public static void staticSetUp() {
@@ -85,7 +85,7 @@ public class BlackBoxTest {
 
 		configurationManager = BlackBoxTest
 				.getService(ConfigurationManagerService.class);
-		dasFactory = BlackBoxTest.getService(DasFactory.class);
+		dasFactory = BlackBoxTest.getService(SeriesDasFactory.class);
 
 		createRequiredDirectories();
 

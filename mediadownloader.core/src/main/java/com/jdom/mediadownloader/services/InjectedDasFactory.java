@@ -22,37 +22,14 @@ package com.jdom.mediadownloader.services;
  */
 public class InjectedDasFactory implements DasFactory {
 
-	private final SeriesDASService seriesDas;
 	private final UserDASService userDas;
-	private final SeriesNotificationDASService seriesNotificationDas;
-	private final SeriesDownloadDASService seriesDownloadDas;
 
-	public InjectedDasFactory(SeriesDASService seriesDas, UserDASService userDas,
-			SeriesNotificationDASService seriesNotificationDas,
-			SeriesDownloadDASService seriesDownloadDas) {
-		this.seriesDas = seriesDas;
+	public InjectedDasFactory(UserDASService userDas) {
 		this.userDas = userDas;
-		this.seriesNotificationDas = seriesNotificationDas;
-		this.seriesDownloadDas = seriesDownloadDas;
-	}
-
-	@Override
-	public SeriesDASService getSeriesDAS() {
-		return seriesDas;
 	}
 
 	@Override
 	public UserDASService getUserDAS() {
 		return userDas;
-	}
-
-	@Override
-	public SeriesNotificationDASService getSeriesNotificationDAS() {
-		return seriesNotificationDas;
-	}
-
-	@Override
-	public SeriesDownloadDASService getSeriesDownloadDAS() {
-		return seriesDownloadDas;
 	}
 }

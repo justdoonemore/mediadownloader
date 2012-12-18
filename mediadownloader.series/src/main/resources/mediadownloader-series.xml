@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+http://www.springframework.org/schema/context 
+http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<bean id="seriesNotifier" class="com.jdom.mediadownloader.services.SeriesNotifier">
+		<constructor-arg ref="configurationManagerService" />
+		<constructor-arg ref="emailService" />
+	</bean>
+
+	<bean id="seriesDownloadQueueManager"
+		class="com.jdom.mediadownloader.series.download.queue.SeriesDownloadDatabaseQueue">
+		<constructor-arg ref="seriesDasFactory" />
+	</bean>
+
+	<bean id="seriesDownloadProcessor" class="com.jdom.mediadownloader.series.SeriesDownloadProcessor">
+		<constructor-arg ref="seriesDasFactory" />
+		<constructor-arg ref="seriesLinkFinder" />
+		<constructor-arg ref="nzbDownloader" />
+	</bean>
+
+	<bean factory-bean="mediaProcessorRegistry" factory-method="register">
+		<constructor-arg ref="seriesDownloadProcessor" />
+	</bean>
+
+	<bean id="seriesLinkFinder" class="com.jdom.mediadownloader.series.util.NzbIndexRssFeedLinkFinder">
+		<constructor-arg ref="configurationManagerService" />
+		<constructor-arg ref="urlDownloadService" />
+	</bean>
+
+	<bean id="nzbDownloader" class="${nzbDownloader.impl}">
+		<constructor-arg ref="seriesDasFactory" />
+		<constructor-arg ref="configurationManagerService" />
+		<constructor-arg ref="urlDownloadService" />
+		<constructor-arg ref="seriesNotifier" />
+	</bean>
+
+	<!-- Set static variable instances -->
+	<bean id="seriesService" class="com.jdom.mediadownloader.services.series.SeriesService">
+		<constructor-arg ref="seriesDasFactory" />
+	</bean>
+
+	<bean id="seriesDownloadUtil"
+		class="com.jdom.mediadownloader.series.download.util.SeriesDownloadUtil">
+		<constructor-arg ref="configurationManagerService" />
+		<constructor-arg ref="seriesDownloadQueueManager" />
+	</bean>
+
+</beans>

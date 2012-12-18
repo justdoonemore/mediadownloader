@@ -19,7 +19,6 @@ package com.jdom.mediadownloader.services;
 import java.io.File;
 import java.util.regex.Pattern;
 
-import com.jdom.services.series.util.SeriesLinkFinder;
 import com.jdom.util.email.Email;
 
 public class ConfigurationManager implements ConfigurationManagerService {
@@ -55,8 +54,6 @@ public class ConfigurationManager implements ConfigurationManagerService {
 			.getProperty("file.pickup.last.modified"));
 
 	private volatile static String[] seriesDownloadTitleExclusions = null;
-
-	private SeriesLinkFinder seriesLinkFinder;
 
 	@Override
 	public File getNzbDestinationDirectory() {

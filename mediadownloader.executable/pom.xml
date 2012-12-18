@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.jdom</groupId>
 		<artifactId>mediadownloader</artifactId>
-		<version>0.0.3</version>
+		<version>0.0.4</version>
 	</parent>
 	<artifactId>mediadownloader.executable</artifactId>
 
@@ -46,6 +46,13 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>mediadownloader.core</artifactId>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>mediadownloader.series</artifactId>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>

@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>mediadownloader</artifactId>
 		<groupId>com.jdom</groupId>
-		<version>0.0.3</version>
+		<version>0.0.4</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mediadownloader.core</artifactId>
@@ -16,6 +16,22 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+
+		<plugins>
+			<!-- Override here to ALSO create a test jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven.jar.plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 
 	<dependencies>
@@ -39,7 +55,7 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
