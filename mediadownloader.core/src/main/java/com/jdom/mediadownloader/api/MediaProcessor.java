@@ -16,12 +16,50 @@
  */
 package com.jdom.mediadownloader.api;
 
+import java.util.Collection;
+import java.util.List;
+
+import com.jdom.mediadownloader.domain.AbstractEntity;
+import com.jdom.mediadownloader.domain.EntityDownload;
+
 /**
  * @author djohnson
  * 
  */
-public interface MediaProcessor {
+public interface MediaProcessor<T extends AbstractEntity<T>, U extends EntityDownload<U, T>> {
 
-	void process();
+	/**
+	 * Purge any failed downloads.
+	 */
+	void purgeFailedDownloads();
+
+	/**
+	 * Get the list of entities this processor monitors.
+	 * 
+	 * @return the list of entities
+	 */
+	List<T> getEntities();
+
+	/**
+	 * Find any new downloads for the entities.
+	 * 
+	 * @param entities
+	 *            the entities
+	 * @return the downloads to be processed
+	 */
+	Collection<U> findDownloads(List<T> entities);
+
+	/**
+	 * Process the downloads.
+	 * 
+	 * @param downloads
+	 *            the downloads
+	 */
+	void download(Collection<U> downloads);
+
+	/**
+	 * Process successful downloads.
+	 */
+	void processSuccessfulDownloads();
 
 }

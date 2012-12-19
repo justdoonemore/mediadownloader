@@ -25,8 +25,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.download.SabnzbdNzbDownloader;
-import com.jdom.mediadownloader.series.download.SeriesDownload;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
 import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.SeriesNotifierService;

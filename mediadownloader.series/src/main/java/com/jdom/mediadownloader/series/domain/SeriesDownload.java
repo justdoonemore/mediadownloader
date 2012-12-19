@@ -16,89 +16,67 @@
  */
 package com.jdom.mediadownloader.series.domain;
 
+import java.net.URL;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import com.jdom.mediadownloader.domain.AbstractEntity;
+import com.jdom.mediadownloader.domain.EntityDownload;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "seriesid",
 		"season", "episode" }))
-public class SeriesDownload extends AbstractEntity<SeriesDownload> {
+public class SeriesDownload extends EntityDownload<SeriesDownload, Series> {
 
 	private static final long serialVersionUID = 1L;
-
-	private Series series;
-
-	private int id;
 
 	private int season;
 
 	private int episode;
 
-	private Date time;
+	private URL link;
+
+	private String nzbTitle;
 
 	public SeriesDownload() {
 	}
 
 	public SeriesDownload(Series series, int season, int episode, Date time) {
-		this.series = series;
+		this(series, null, season, episode, time, null);
+	}
+
+	public SeriesDownload(Series series, String nzbTitle, int season,
+			int episode, Date time, URL url) {
+		super(series, time);
+		this.nzbTitle = nzbTitle;
 		this.season = season;
 		this.episode = episode;
-		this.time = time;
+		this.link = url;
 	}
 
-	/**
-	 * Auto-generated primary key.
-	 * 
-	 * @return the id for this entity object
-	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
+	@Override
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "seriesid")
-	public Series getSeries() {
-		return series;
+	public Series getEntity() {
+		return entity;
 	}
 
-	public void setSeries(Series series) {
-		this.series = series;
-	}
-
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getTime() {
-		return time;
-	}
-
-	public void setTime(Date time) {
-		this.time = time;
+	@Override
+	public void setEntity(Series entity) {
+		this.entity = entity;
 	}
 
 	@Transient
 	public String getName() {
-		return series.getName();
+		return entity.getName();
 	}
 
 	public int getSeason() {
@@ -117,9 +95,27 @@ public class SeriesDownload extends AbstractEntity<SeriesDownload> {
 		this.episode = episode;
 	}
 
+	@Transient
+	public URL getLink() {
+		return link;
+	}
+
+	public void setLink(URL link) {
+		this.link = link;
+	}
+
+	@Transient
+	public String getNzbTitle() {
+		return nzbTitle;
+	}
+
+	public void setNzbTitle(String nzbTitle) {
+		this.nzbTitle = nzbTitle;
+	}
+
 	@Override
 	public int compareTo(SeriesDownload o) {
-		return this.getSeries().compareTo(o.getSeries());
+		return this.getEntity().compareTo(o.getEntity());
 	}
 
 	@Override
@@ -135,7 +131,7 @@ public class SeriesDownload extends AbstractEntity<SeriesDownload> {
 
 	@Override
 	public SeriesDownload clone() {
-		return new SeriesDownload(series, season, episode, time);
+		return new SeriesDownload(entity, season, episode, time);
 	}
 
 	@Override
@@ -144,7 +140,7 @@ public class SeriesDownload extends AbstractEntity<SeriesDownload> {
 			SeriesDownload other = (SeriesDownload) obj;
 
 			EqualsBuilder builder = new EqualsBuilder();
-			builder.append(this.series, other.series);
+			builder.append(this.entity, other.entity);
 			builder.append(this.season, other.season);
 			builder.append(this.episode, other.episode);
 			builder.append(this.time, other.time);
@@ -157,7 +153,7 @@ public class SeriesDownload extends AbstractEntity<SeriesDownload> {
 	@Override
 	public int hashCode() {
 		HashCodeBuilder builder = new HashCodeBuilder();
-		builder.append(this.getSeries());
+		builder.append(this.getEntity());
 		builder.append(this.getSeason());
 		builder.append(this.getEpisode());
 		builder.append(this.getTime());

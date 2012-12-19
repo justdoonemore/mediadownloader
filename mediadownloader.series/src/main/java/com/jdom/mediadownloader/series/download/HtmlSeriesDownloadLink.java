@@ -13,13 +13,16 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.mediadownloader.series.download;
+ */
+package com.jdom.mediadownloader.series.download;
 
 import java.util.Random;
 
 import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.util.SeriesUtil;
 import com.jdom.util.html.HtmlLink;
+import com.jdom.util.time.TimeUtil;
 
 public class HtmlSeriesDownloadLink implements SeriesDownloadLink {
 
@@ -113,7 +116,8 @@ public class HtmlSeriesDownloadLink implements SeriesDownloadLink {
 		// Create a series download object
 		SeriesDownload seriesToDownload = new SeriesDownload(
 				seriesDownloadMarker, nzbTitle, parsedSeriesSeason,
-				parsedSeriesEpisode, htmlLink.getUrl());
+				parsedSeriesEpisode, TimeUtil.newImmutableDate(),
+				htmlLink.getUrl());
 
 		return seriesToDownload;
 	}

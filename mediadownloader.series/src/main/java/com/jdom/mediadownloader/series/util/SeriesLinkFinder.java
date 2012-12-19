@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.download.SeriesDownload;
+import com.jdom.mediadownloader.series.domain.SeriesDownload;
 
 public interface SeriesLinkFinder {
 

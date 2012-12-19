@@ -13,11 +13,14 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.mediadownloader.series.download;
+ */
+package com.jdom.mediadownloader.series.download;
+
+import com.jdom.mediadownloader.series.domain.SeriesDownload;
 
 public interface SeriesDownloadLink {
 
-    boolean matchesSeriesDownloadCriteria();
+	boolean matchesSeriesDownloadCriteria();
 
-    SeriesDownload createSeriesDownload();
+	SeriesDownload createSeriesDownload();
 }

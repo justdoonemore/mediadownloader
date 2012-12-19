@@ -18,6 +18,8 @@ package com.jdom.mediadownloader.series.download;
 
 import java.util.Collection;
 
+import com.jdom.mediadownloader.series.domain.SeriesDownload;
+
 public interface NzbDownloader {
 
 	/**

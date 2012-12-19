@@ -55,7 +55,7 @@ public class SeriesDownloadDatabaseQueue implements SeriesDownloadQueueManager {
 		SeriesDASService seriesDas = dasFactory.getSeriesDAS();
 		Series seriesEntity = seriesDas.getSeriesByName(series.getName());
 		if (seriesEntity != null) {
-			download.setSeries(seriesEntity);
+			download.setEntity(seriesEntity);
 
 			SeriesDownloadDASService das = dasFactory.getSeriesDownloadDAS();
 

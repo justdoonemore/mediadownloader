@@ -47,16 +47,17 @@ public class SeriesDownloadDAS extends AbstractDAS<SeriesDownload> implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SeriesDownload getBySeriesNameSeasonAndEpisode(SeriesDownload download) {
+	public SeriesDownload getBySeriesNameSeasonAndEpisode(
+			SeriesDownload download) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("name", download.getSeries().getName());
+		params.put("name", download.getEntity().getName());
 		params.put("season", download.getSeason());
 		params.put("episode", download.getEpisode());
 
 		List<SeriesDownload> seriesList = runQuery(
 				"SELECT c FROM "
 						+ getDASClass().getSimpleName()
-						+ " c where c.series.name = :name and c.season = :season and c.episode = :episode",
+						+ " c where c.entity.name = :name and c.season = :season and c.episode = :episode",
 				params);
 
 		if (seriesList.size() == 1) {

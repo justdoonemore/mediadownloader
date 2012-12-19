@@ -17,6 +17,8 @@
 package com.jdom.mediadownloader;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -24,6 +26,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.jdom.mediadownloader.ApplicationLock.LockException;
 import com.jdom.mediadownloader.api.MediaProcessor;
 import com.jdom.mediadownloader.api.MediaProcessorRegistry;
+import com.jdom.mediadownloader.domain.AbstractEntity;
+import com.jdom.mediadownloader.domain.EntityDownload;
 import com.jdom.util.properties.PropertiesUtil;
 
 public class MediaDownloader {
@@ -78,10 +82,10 @@ public class MediaDownloader {
 	private void processDownloads() {
 		try {
 			if (applicationLock.tryLock()) {
-				for (MediaProcessor processor : mediaProcessorRegistry
+				for (MediaProcessor<?, ?> processor : mediaProcessorRegistry
 						.getRegistered()) {
 					try {
-						processor.process();
+						invokeMediaProcessor(processor);
 					} catch (Exception e) {
 						LOG.error("Exception while processing.", e);
 					}
@@ -94,5 +98,20 @@ public class MediaDownloader {
 		} finally {
 			applicationLock.unlock();
 		}
+	}
+
+	private <T extends AbstractEntity<T>, U extends EntityDownload<U, T>> void invokeMediaProcessor(
+			MediaProcessor<T, U> processor) {
+		processor.purgeFailedDownloads();
+
+		List<T> entities = processor.getEntities();
+
+		Collection<U> downloads = processor.findDownloads(entities);
+
+		if (!downloads.isEmpty()) {
+			processor.download(downloads);
+		}
+
+		processor.processSuccessfulDownloads();
 	}
 }

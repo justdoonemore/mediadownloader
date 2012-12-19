@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.domain.SeriesEpisodeComparator;
 import com.jdom.mediadownloader.series.download.util.SeriesDownloadUtil;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
@@ -107,7 +108,7 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 		// Download each nzb and update the series object
 		for (SeriesDownload seriesDownload : seriesDownloads) {
 			// Get the series in question
-			Series series = seriesDownload.getSeries();
+			Series series = seriesDownload.getEntity();
 
 			// First things first, make sure the series is not already in the
 			// download queue

@@ -22,6 +22,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -30,6 +32,8 @@ import com.jdom.mediadownloader.domain.User;
 import com.jdom.util.compare.CompareUtil;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "seriesid",
+		"userid" }))
 public class SeriesNotification extends AbstractEntity<SeriesNotification> {
 
 	/**

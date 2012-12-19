@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.download.SeriesDownload;
+import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.download.SeriesDownloadFinder;
 import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.UrlDownloadService;

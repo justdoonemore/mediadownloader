@@ -21,13 +21,14 @@ import java.util.List;
 
 import com.jdom.mediadownloader.api.MediaProcessor;
 import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.download.NzbDownloader;
-import com.jdom.mediadownloader.series.download.SeriesDownload;
 import com.jdom.mediadownloader.series.download.util.SeriesDownloadUtil;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
 import com.jdom.mediadownloader.series.util.SeriesLinkFinder;
 
-public final class SeriesDownloadProcessor implements MediaProcessor {
+public final class SeriesDownloadProcessor implements
+		MediaProcessor<Series, SeriesDownload> {
 
 	private final SeriesLinkFinder seriesLinkFinder;
 
@@ -43,18 +44,49 @@ public final class SeriesDownloadProcessor implements MediaProcessor {
 	}
 
 	@Override
-	public void process() {
-		SeriesDownloadUtil.purgeExpiredSeries();
+	public Collection<SeriesDownload> findDownloads(
+			List<Series> seriesCollection) {
+		return seriesLinkFinder.findSeriesDownloads(seriesCollection);
+	}
 
-		List<Series> entities = dasFactory.getSeriesDAS().getAll();
-
-		Collection<SeriesDownload> downloads = seriesLinkFinder
-				.findSeriesDownloads(entities);
-
-		if (!downloads.isEmpty()) {
-			nzbDownloader.downloadNzbs(downloads);
-		}
-
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @see com.jdom.mediadownloader.api.MediaProcessor#processSuccessfulDownloads()
+	 */
+	@Override
+	public void processSuccessfulDownloads() {
 		nzbDownloader.processDownloadedItems();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.jdom.mediadownloader.api.MediaProcessor#purgeFailedDownloads()
+	 */
+	@Override
+	public void purgeFailedDownloads() {
+		SeriesDownloadUtil.purgeExpiredSeries();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.jdom.mediadownloader.api.MediaProcessor#download(java.util.Collection)
+	 */
+	@Override
+	public void download(Collection<SeriesDownload> downloads) {
+		nzbDownloader.downloadNzbs(downloads);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.jdom.mediadownloader.api.MediaProcessor#getEntities()
+	 */
+	@Override
+	public List<Series> getEntities() {
+		return dasFactory.getSeriesDAS().getAll();
 	}
 }
