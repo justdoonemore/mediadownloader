@@ -122,6 +122,7 @@ public class SeriesDownloadFinder {
 
 			SeriesDownload seriesToDownload = seriesDownloadLink
 					.createSeriesDownload();
+			seriesToDownload.getEntity().setId(series.getId());
 
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Found season [" + seriesToDownload.getSeason()

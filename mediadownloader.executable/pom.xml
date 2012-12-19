@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.jdom</groupId>
 		<artifactId>mediadownloader</artifactId>
-		<version>0.0.5</version>
+		<version>0.0.6</version>
 	</parent>
 	<artifactId>mediadownloader.executable</artifactId>
 

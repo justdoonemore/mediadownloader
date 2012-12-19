@@ -53,6 +53,11 @@ public abstract class AbstractDAS<T extends Comparable<T>> implements
 	}
 
 	@Override
+	public T getById(int id) {
+		return em.find(getDASClass(), id);
+	}
+
+	@Override
 	public List<T> getMostRecent(int maxNumberOfResults) {
 		return runQuery("SELECT type FROM " + getDASClass().getSimpleName()
 				+ " type ORDER BY " + getIdColumn() + " DESC",

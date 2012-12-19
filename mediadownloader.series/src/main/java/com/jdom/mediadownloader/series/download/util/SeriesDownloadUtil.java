@@ -42,7 +42,7 @@ public final class SeriesDownloadUtil {
 	 * @return true if the series was added
 	 */
 	public static boolean addSeries(Series series) {
-		return queueManager.addSeries(series);
+		return queueManager.addEntity(series);
 	}
 
 	/**
@@ -51,7 +51,7 @@ public final class SeriesDownloadUtil {
 	 * @return true if the series was removed
 	 */
 	public static boolean removeSeries(Series series) {
-		return queueManager.removeSeries(series);
+		return queueManager.removeEntity(series);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public final class SeriesDownloadUtil {
 	 * @return true if the series is in the download queue
 	 */
 	public static boolean containsSeries(Series series) {
-		return queueManager.containsSeries(series);
+		return queueManager.containsEntity(series);
 	}
 
 	/**
@@ -79,6 +79,6 @@ public final class SeriesDownloadUtil {
 		long millisTime = seriesDownloadTimeToLiveInHours
 				* TimeConstants.MILLIS_PER_HOUR;
 
-		queueManager.purgeExpiredSeries(millisTime);
+		queueManager.purgeExpiredDownloads(millisTime);
 	}
 }

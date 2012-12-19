@@ -13,39 +13,45 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.mediadownloader.domain;
+ */
+package com.jdom.mediadownloader.domain;
 
 import java.io.Serializable;
 
 /**
- * This class represents an abstract persistence entity. All persistence classes should be
- * serializable and comparable.
+ * This class represents an abstract persistence entity. All persistence classes
+ * should be serializable and comparable.
  * 
  * @author djohnson
  * 
  */
-public abstract class AbstractEntity<T> implements Serializable, Comparable<T>, Cloneable {
+public abstract class AbstractEntity<T> implements Serializable, Comparable<T>,
+		Cloneable {
 
-    /**
-     * serialVersionUID.
-     */
-    private static final long serialVersionUID = -4454083113523797223L;
+	/**
+	 * serialVersionUID.
+	 */
+	private static final long serialVersionUID = -4454083113523797223L;
 
-    /**
-     * Forces an entity class to override toString().
-     */
-    @Override
-    public abstract String toString();
+	public abstract int getId();
 
-    /**
-     * Forces an entity class to override clone().
-     */
-    @Override
-    public abstract T clone();
+	public abstract void setId(int id);
 
-    @Override
-    public abstract boolean equals(Object obj);
+	/**
+	 * Forces an entity class to override toString().
+	 */
+	@Override
+	public abstract String toString();
 
-    @Override
-    public abstract int hashCode();
+	/**
+	 * Forces an entity class to override clone().
+	 */
+	@Override
+	public abstract T clone();
+
+	@Override
+	public abstract boolean equals(Object obj);
+
+	@Override
+	public abstract int hashCode();
 }

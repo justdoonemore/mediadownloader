@@ -101,12 +101,14 @@ public class SeriesNotification extends AbstractEntity<SeriesNotification> {
 	 * 
 	 * @return the id for this entity object
 	 */
+	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public int getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(int id) {
 		this.id = id;
 	}

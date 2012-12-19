@@ -13,10 +13,10 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.persist.persistence;
+ */
+package com.jdom.persist.persistence;
 
 import com.jdom.mediadownloader.domain.AbstractEntity;
-import com.jdom.persist.persistence.AbstractDAS;
 
 public class MockDas extends
 		AbstractDAS<com.jdom.persist.persistence.MockDas.MockEntity> {
@@ -32,6 +32,7 @@ public class MockDas extends
 		 * serialVersionUID.
 		 */
 		private static final long serialVersionUID = 1L;
+		private int id;
 
 		@Override
 		public MockEntity clone() {
@@ -56,6 +57,26 @@ public class MockDas extends
 		@Override
 		public int compareTo(MockEntity arg0) {
 			return 0;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see com.jdom.mediadownloader.domain.AbstractEntity#getId()
+		 */
+		@Override
+		public int getId() {
+			return id;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @see com.jdom.mediadownloader.domain.AbstractEntity#setId(int)
+		 */
+		@Override
+		public void setId(int id) {
+			this.id = id;
 		}
 	}
 

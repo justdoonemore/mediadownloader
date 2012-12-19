@@ -161,7 +161,10 @@ public class BlackBoxTest {
 
 	@Test
 	public void doesNotDownloadEpisodesAlreadyInDownloadQueue() {
-		SeriesDownloadUtil.addSeries(new Series("The Simpsons", 24, 7));
+		// episode 7 is already downloading
+		Series alreadyDownloadingEpisode = getSimpsonsEpisode();
+		alreadyDownloadingEpisode.setEpisode(7);
+		SeriesDownloadUtil.addSeries(alreadyDownloadingEpisode);
 
 		startMediaDownloader();
 

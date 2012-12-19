@@ -27,6 +27,8 @@ import java.util.List;
  *            The entity for this DAS
  */
 public interface AbstractDASService<T> {
+	T getById(int id);
+
 	List<T> getAll();
 
 	List<T> getMostRecent(int maxNumberOfResults);

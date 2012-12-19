@@ -24,7 +24,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.download.queue.SeriesDownloadDatabaseQueue;
 import com.jdom.util.time.TimeUtil;
 import com.jdom.util.time.TimeUtilTest;
 
@@ -45,22 +44,22 @@ public class SeriesDownloadQueueMemoryImplTest {
 
 	@Before
 	public void setUp() {
-		assertTrue(seriesDownloadQueueMemoryImpl.addSeries(inQueue));
+		assertTrue(seriesDownloadQueueMemoryImpl.addEntity(inQueue));
 	}
 
 	@Test
 	public void removedSeriesReturnsTrue() {
-		assertTrue(seriesDownloadQueueMemoryImpl.removeSeries(inQueue));
+		assertTrue(seriesDownloadQueueMemoryImpl.removeEntity(inQueue));
 	}
 
 	@Test
 	public void addedSeriesAlreadyInQueueReturnsFalse() {
-		assertFalse(seriesDownloadQueueMemoryImpl.addSeries(inQueue));
+		assertFalse(seriesDownloadQueueMemoryImpl.addEntity(inQueue));
 	}
 
 	@Test
 	public void removedSeriesNotInQueueReturnsFalse() {
-		assertFalse(seriesDownloadQueueMemoryImpl.removeSeries(notInQueue));
+		assertFalse(seriesDownloadQueueMemoryImpl.removeEntity(notInQueue));
 	}
 
 	@Test
@@ -72,14 +71,14 @@ public class SeriesDownloadQueueMemoryImplTest {
 		TimeUtilTest.freezeTime(TimeUtil.currentTimeMillis() + timeToLive);
 
 		// Add a new series
-		seriesDownloadQueueMemoryImpl.addSeries(notInQueue);
+		seriesDownloadQueueMemoryImpl.addEntity(notInQueue);
 
 		// Purge old entries
-		seriesDownloadQueueMemoryImpl.purgeExpiredSeries(timeToLive);
+		seriesDownloadQueueMemoryImpl.purgeExpiredDownloads(timeToLive);
 
 		// Should not have inQueue
-		assertTrue(seriesDownloadQueueMemoryImpl.addSeries(inQueue));
+		assertTrue(seriesDownloadQueueMemoryImpl.addEntity(inQueue));
 		// Should have notInQueue
-		assertFalse(seriesDownloadQueueMemoryImpl.addSeries(notInQueue));
+		assertFalse(seriesDownloadQueueMemoryImpl.addEntity(notInQueue));
 	}
 }
