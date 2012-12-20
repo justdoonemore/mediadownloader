@@ -139,12 +139,6 @@ public class MediaDownloader {
 				}
 			}
 
-			if (LOG.isInfoEnabled()) {
-				LOG.info(String.format(
-						"Found [%s] downloads for media processor [%s]",
-						downloads.size(), processor.getName()));
-			}
-
 			long sleepTimeBetweenDownloads = processor
 					.getSleepTimeBetweenDownloads();
 
@@ -158,6 +152,12 @@ public class MediaDownloader {
 			}
 
 			processor.processSuccessfulDownloads();
+		}
+
+		if (LOG.isInfoEnabled()) {
+			LOG.info(String.format(
+					"Found [%s] downloads for media processor [%s]",
+					downloads.size(), processor.getName()));
 		}
 	}
 
