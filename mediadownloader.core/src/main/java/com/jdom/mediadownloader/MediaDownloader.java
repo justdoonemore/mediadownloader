@@ -18,6 +18,7 @@ package com.jdom.mediadownloader;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -28,6 +29,7 @@ import com.jdom.mediadownloader.api.MediaProcessor;
 import com.jdom.mediadownloader.api.MediaProcessorRegistry;
 import com.jdom.mediadownloader.domain.AbstractEntity;
 import com.jdom.mediadownloader.domain.EntityDownload;
+import com.jdom.mediadownloader.download.queue.EntityDownloadQueueManager;
 import com.jdom.util.properties.PropertiesUtil;
 
 public class MediaDownloader {
@@ -109,9 +111,65 @@ public class MediaDownloader {
 		Collection<U> downloads = processor.findDownloads(entities);
 
 		if (!downloads.isEmpty()) {
-			processor.download(downloads);
-		}
+			EntityDownloadQueueManager<T, U> queueManager = processor
+					.getDownloadQueueManager();
 
-		processor.processSuccessfulDownloads();
+			// Remove anything currently downloading, and any remaining
+			// downloads to the queue
+			for (Iterator<U> iter = downloads.iterator(); iter.hasNext();) {
+
+				// Get the entity in question
+				U download = iter.next();
+				T entity = download.getEntity();
+
+				// First things first, make sure the series is not already in
+				// the download queue
+				if (queueManager.containsEntity(entity)) {
+					if (LOG.isDebugEnabled()) {
+						LOG.debug(String
+								.format("%s is already in the download queue, skipping...",
+										download));
+					}
+
+					iter.remove();
+				} else {
+					LOG.info(String.format("Added %s to the download queue",
+							download));
+					queueManager.addEntity(entity);
+				}
+			}
+
+			if (LOG.isInfoEnabled()) {
+				LOG.info(String.format(
+						"Found [%s] downloads for media processor [%s]",
+						downloads.size(), processor.getName()));
+			}
+
+			long sleepTimeBetweenDownloads = processor
+					.getSleepTimeBetweenDownloads();
+
+			// Perform the actual downloads
+			for (U download : downloads) {
+				processor.download(download);
+
+				if (sleepTimeBetweenDownloads > 0) {
+					sleepBetweenDownloads(sleepTimeBetweenDownloads);
+				}
+			}
+
+			processor.processSuccessfulDownloads();
+		}
+	}
+
+	private void sleepBetweenDownloads(long sleepTimeBetweenDownloads) {
+		try {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Sleeping for " + sleepTimeBetweenDownloads
+						+ " ms until next download.");
+			}
+			Thread.sleep(sleepTimeBetweenDownloads);
+		} catch (InterruptedException e) {
+			LOG.error("Exception while sleeping", e);
+		}
 	}
 }

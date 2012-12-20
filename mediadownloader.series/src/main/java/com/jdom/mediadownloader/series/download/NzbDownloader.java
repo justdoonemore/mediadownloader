@@ -16,16 +16,14 @@
  */
 package com.jdom.mediadownloader.series.download;
 
-import java.util.Collection;
-
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
 
 public interface NzbDownloader {
 
 	/**
-	 * Download the actual NZBs.
+	 * Download the actual NZB.
 	 */
-	void downloadNzbs(Collection<SeriesDownload> downloads);
+	void downloadNzb(SeriesDownload download);
 
 	/**
 	 * Processes downloaded items.

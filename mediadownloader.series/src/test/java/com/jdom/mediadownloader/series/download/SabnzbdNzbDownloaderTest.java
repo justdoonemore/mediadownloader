@@ -18,6 +18,7 @@ package com.jdom.mediadownloader.series.download;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,7 @@ import org.junit.Test;
 
 import com.jdom.junit.utils.TestUtil;
 import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.util.time.TimeUtil;
 
 public class SabnzbdNzbDownloaderTest {
@@ -37,8 +39,12 @@ public class SabnzbdNzbDownloaderTest {
 
 	private static final int TOTAL_DOWNLOADS = 4;
 
-	private final SabnzbdNzbDownloader action = new SabnzbdNzbDownloader(null,
-			null, null, null);
+	private final ConfigurationManagerService configurationManager = mock(ConfigurationManagerService.class);
+
+	// For this test it just needs to call a method on the configuration
+	// manager, null is ok to be returned
+	private final SabnzbdNzbDownloader nzbDownloader = new SabnzbdNzbDownloader(
+			null, configurationManager, null, null);
 
 	private File workingDir;
 
@@ -141,7 +147,7 @@ public class SabnzbdNzbDownloaderTest {
 		series.setSeason(3);
 		series.setEpisode(2);
 
-		seriesObj = action.prepareSeriesUpdate(seriesObj, series);
+		seriesObj = nzbDownloader.prepareSeriesUpdate(seriesObj, series);
 
 		series.incrementEpisode();
 
@@ -156,7 +162,7 @@ public class SabnzbdNzbDownloaderTest {
 		Series series = seriesObj.clone();
 		series.setEpisode(6);
 
-		seriesObj = action.prepareSeriesUpdate(seriesObj, series);
+		seriesObj = nzbDownloader.prepareSeriesUpdate(seriesObj, series);
 
 		series.incrementEpisode();
 
@@ -171,7 +177,7 @@ public class SabnzbdNzbDownloaderTest {
 		Series series = seriesObj.clone();
 		series.setEpisode(1);
 
-		Series seriesNew = action.prepareSeriesUpdate(seriesObj, series);
+		Series seriesNew = nzbDownloader.prepareSeriesUpdate(seriesObj, series);
 
 		assertEquals(seriesObj, seriesNew);
 	}
@@ -183,7 +189,7 @@ public class SabnzbdNzbDownloaderTest {
 		// The download
 		Series series = seriesObj.clone();
 
-		Series seriesNew = action.prepareSeriesUpdate(seriesObj, series);
+		Series seriesNew = nzbDownloader.prepareSeriesUpdate(seriesObj, series);
 
 		seriesObj.incrementEpisode();
 
@@ -220,7 +226,7 @@ public class SabnzbdNzbDownloaderTest {
 		int totalMoved = numberOfMoviesFoldersMoved + numberOfTvFoldersMoved;
 		int leftInDownloaded = numberOfFolderCreatedForTest - totalMoved;
 
-		List<Series> seriesList = action.handleRetrievedNzbs(
+		List<Series> seriesList = nzbDownloader.handleRetrievedNzbs(
 				downloadedDirectory, tvDirectory, moviesDirectory,
 				LONG_AGO_IN_MILLIS);
 

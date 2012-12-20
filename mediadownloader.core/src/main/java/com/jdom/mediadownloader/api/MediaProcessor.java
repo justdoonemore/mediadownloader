@@ -21,12 +21,20 @@ import java.util.List;
 
 import com.jdom.mediadownloader.domain.AbstractEntity;
 import com.jdom.mediadownloader.domain.EntityDownload;
+import com.jdom.mediadownloader.download.queue.EntityDownloadQueueManager;
 
 /**
  * @author djohnson
  * 
  */
 public interface MediaProcessor<T extends AbstractEntity<T>, U extends EntityDownload<U, T>> {
+
+	/**
+	 * Return the name of the media processor.
+	 * 
+	 * @return the name
+	 */
+	String getName();
 
 	/**
 	 * Purge any failed downloads.
@@ -50,16 +58,30 @@ public interface MediaProcessor<T extends AbstractEntity<T>, U extends EntityDow
 	Collection<U> findDownloads(List<T> entities);
 
 	/**
-	 * Process the downloads.
+	 * Process the download.
 	 * 
-	 * @param downloads
-	 *            the downloads
+	 * @param download
+	 *            the download
 	 */
-	void download(Collection<U> downloads);
+	void download(U download);
 
 	/**
 	 * Process successful downloads.
 	 */
 	void processSuccessfulDownloads();
+
+	/**
+	 * Get the entity download queue manager.
+	 * 
+	 * @return the queue manager
+	 */
+	EntityDownloadQueueManager<T, U> getDownloadQueueManager();
+
+	/**
+	 * Get the sleep time that should be spent between downloads.
+	 * 
+	 * @return the sleep time between downloads
+	 */
+	long getSleepTimeBetweenDownloads();
 
 }

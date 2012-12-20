@@ -94,11 +94,6 @@ public class NzbIndexRssFeedLinkFinder extends AbstractSeriesLinkFinder {
 			downloads.addAll(seriesDownloadFinder.findDownloads());
 		}
 
-		if (LOG.isInfoEnabled()) {
-			LOG.info("Found [" + downloads.size()
-					+ "] nzbs ready for download.");
-		}
-
 		return downloads;
 	}
 

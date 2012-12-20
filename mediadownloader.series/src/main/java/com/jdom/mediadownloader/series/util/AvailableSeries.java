@@ -13,8 +13,10 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.mediadownloader.series.util;
+ */
+package com.jdom.mediadownloader.series.util;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class AvailableSeries implements Comparable<AvailableSeries> {
@@ -51,16 +53,15 @@ public class AvailableSeries implements Comparable<AvailableSeries> {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		boolean retVal = false;
-
 		// Only consider the name important
 		if (obj instanceof AvailableSeries) {
 			AvailableSeries that = (AvailableSeries) obj;
 
-			retVal = this.getName().equals(that.getName());
+			EqualsBuilder builder = new EqualsBuilder();
+			builder.append(this.getName(), that.getName());
+			return builder.isEquals();
 		}
-
-		return retVal;
+		return false;
 	}
 
 	/**

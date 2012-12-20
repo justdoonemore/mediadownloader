@@ -23,6 +23,7 @@ http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 		<constructor-arg ref="seriesDasFactory" />
 		<constructor-arg ref="seriesLinkFinder" />
 		<constructor-arg ref="nzbDownloader" />
+		<constructor-arg ref="seriesDownloadQueueManager" />
 	</bean>
 
 	<bean factory-bean="mediaProcessorRegistry" factory-method="register">

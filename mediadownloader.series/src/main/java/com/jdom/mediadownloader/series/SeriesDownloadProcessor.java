@@ -23,6 +23,7 @@ import com.jdom.mediadownloader.api.MediaProcessor;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.download.NzbDownloader;
+import com.jdom.mediadownloader.series.download.queue.SeriesDownloadQueueManager;
 import com.jdom.mediadownloader.series.download.util.SeriesDownloadUtil;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
 import com.jdom.mediadownloader.series.util.SeriesLinkFinder;
@@ -30,17 +31,24 @@ import com.jdom.mediadownloader.series.util.SeriesLinkFinder;
 public final class SeriesDownloadProcessor implements
 		MediaProcessor<Series, SeriesDownload> {
 
+	private static final long SLEEP_TIME_BETWEEN_NZB_DOWNLOADS = Long.getLong(
+			"sleep.time.between.nzb.downloads", 2000L);
+
 	private final SeriesLinkFinder seriesLinkFinder;
 
 	private final NzbDownloader nzbDownloader;
 
 	private final SeriesDasFactory dasFactory;
 
+	private final SeriesDownloadQueueManager seriesDownloadQueueManager;
+
 	public SeriesDownloadProcessor(SeriesDasFactory dasFactory,
-			SeriesLinkFinder seriesLinkFinder, NzbDownloader nzbDownloader) {
+			SeriesLinkFinder seriesLinkFinder, NzbDownloader nzbDownloader,
+			SeriesDownloadQueueManager seriesDownloadQueueManager) {
 		this.dasFactory = dasFactory;
 		this.seriesLinkFinder = seriesLinkFinder;
 		this.nzbDownloader = nzbDownloader;
+		this.seriesDownloadQueueManager = seriesDownloadQueueManager;
 	}
 
 	@Override
@@ -76,8 +84,8 @@ public final class SeriesDownloadProcessor implements
 	 * @see com.jdom.mediadownloader.api.MediaProcessor#download(java.util.Collection)
 	 */
 	@Override
-	public void download(Collection<SeriesDownload> downloads) {
-		nzbDownloader.downloadNzbs(downloads);
+	public void download(SeriesDownload download) {
+		nzbDownloader.downloadNzb(download);
 	}
 
 	/**
@@ -88,5 +96,35 @@ public final class SeriesDownloadProcessor implements
 	@Override
 	public List<Series> getEntities() {
 		return dasFactory.getSeriesDAS().getAll();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.jdom.mediadownloader.api.MediaProcessor#getName()
+	 */
+	@Override
+	public String getName() {
+		return "tvshowdownloader";
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.jdom.mediadownloader.api.MediaProcessor#getDownloadQueueManager()
+	 */
+	@Override
+	public SeriesDownloadQueueManager getDownloadQueueManager() {
+		return seriesDownloadQueueManager;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.jdom.mediadownloader.api.MediaProcessor#getSleepTimeBetweenDownloads()
+	 */
+	@Override
+	public long getSleepTimeBetweenDownloads() {
+		return SLEEP_TIME_BETWEEN_NZB_DOWNLOADS;
 	}
 }

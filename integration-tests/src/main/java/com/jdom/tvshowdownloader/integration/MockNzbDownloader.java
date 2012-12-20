@@ -19,7 +19,6 @@ package com.jdom.tvshowdownloader.integration;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Collection;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -37,23 +36,24 @@ public class MockNzbDownloader extends SabnzbdNzbDownloader implements
 
 	public static ApplicationContext context;
 
+	private final File finishedDownloadsDirectory;
+
 	public MockNzbDownloader(SeriesDasFactory dasFactory,
 			ConfigurationManagerService configurationManager,
 			UrlDownloadService urlDownloadService,
 			SeriesNotifierService seriesNotifier) {
 		super(dasFactory, configurationManager, urlDownloadService,
 				seriesNotifier);
+
+		finishedDownloadsDirectory = configurationManager
+				.getNzbDownloadedDirectory();
 	}
 
 	@Override
-	public void downloadNzbs(Collection<SeriesDownload> downloads) {
-		super.downloadNzbs(downloads);
+	public void downloadNzb(SeriesDownload download) {
+		super.downloadNzb(download);
 
-		final File scanDir = configurationManager.getNzbDestinationDirectory();
-		final File destinationDir = configurationManager
-				.getNzbDownloadedDirectory();
-
-		String[] nzbs = scanDir.list(new FilenameFilter() {
+		String[] nzbs = nzbQueueDirectory.list(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".nzb");
@@ -61,9 +61,9 @@ public class MockNzbDownloader extends SabnzbdNzbDownloader implements
 		});
 		if (nzbs != null) {
 			for (String string : nzbs) {
-				File file = new File(scanDir, string);
-				File destinationFolder = new File(destinationDir, file
-						.getName().replaceAll(".nzb", ""));
+				File file = new File(nzbQueueDirectory, string);
+				File destinationFolder = new File(finishedDownloadsDirectory,
+						file.getName().replaceAll(".nzb", ""));
 				try {
 					org.apache.commons.io.FileUtils.moveFileToDirectory(file,
 							destinationFolder, true);

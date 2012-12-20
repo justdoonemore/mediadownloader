@@ -21,6 +21,7 @@ import java.io.FileFilter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -47,9 +48,6 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 	private static final Logger LOG = Logger
 			.getLogger(SabnzbdNzbDownloader.class);
 
-	private static final long SLEEP_TIME_BETWEEN_NZB_DOWNLOADS = Long.getLong(
-			"sleep.time.between.nzb.downloads", 2000L);
-
 	public static final String UNPACK_PREFIX = "_UNPACK";
 
 	private static final SeriesEpisodeComparator SERIES_EPISODE_COMPARATOR = new SeriesEpisodeComparator();
@@ -63,6 +61,8 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 	private final FileFilter downloadedNzbsFilter;
 
 	private final SeriesNotifierService seriesNotifier;
+
+	protected final File nzbQueueDirectory;
 
 	/**
 	 * Sets up the downloadedNzbsFilter to exclude directories with specific
@@ -83,76 +83,21 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 		exclusionPrefixes.add(UNPACK_PREFIX);
 
 		downloadedNzbsFilter = new ExcludeStartsWith(exclusionPrefixes);
+
+		// The destination directory to write .nzb files to
+		nzbQueueDirectory = configurationManager.getNzbDestinationDirectory();
 	}
 
 	@Override
-	public void downloadNzbs(Collection<SeriesDownload> downloads) {
-
-		File destinationDirectory = configurationManager
-				.getNzbDestinationDirectory();
-
-		writeNzbsToDisk(downloads, destinationDirectory);
-	}
-
-	/**
-	 * Write the NZBs to disk.
-	 * 
-	 * @param downloads
-	 *            the message
-	 * @param destinationDirectory
-	 *            the destination directory
-	 */
-	private void writeNzbsToDisk(Collection<SeriesDownload> seriesDownloads,
-			File destinationDirectory) {
-
-		// Download each nzb and update the series object
-		for (SeriesDownload seriesDownload : seriesDownloads) {
-			// Get the series in question
-			Series series = seriesDownload.getEntity();
-
-			// First things first, make sure the series is not already in the
-			// download queue
-			if (SeriesDownloadUtil.containsSeries(series)) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("The series " + series
-							+ " is already in the download queue, skipping...");
-				}
-				continue;
-			} else {
-				addSeriesToDownloadQueue(destinationDirectory, seriesDownload,
-						series);
-			}
-
-			if (SLEEP_TIME_BETWEEN_NZB_DOWNLOADS > 0) {
-				try {
-
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("Sleeping for "
-								+ SLEEP_TIME_BETWEEN_NZB_DOWNLOADS
-								+ " ms until next download.");
-					}
-					Thread.sleep(SLEEP_TIME_BETWEEN_NZB_DOWNLOADS);
-				} catch (InterruptedException e) {
-					LOG.error("Exception while sleeping", e);
-				}
-			}
-		}
-	}
-
-	private void addSeriesToDownloadQueue(File destinationDirectory,
-			SeriesDownload seriesDownload, Series series) {
-		// Place the series download into the queue
-		if (SeriesDownloadUtil.addSeries(series)) {
-			if (writeNzbToDisk(seriesDownload, destinationDirectory)) {
-				LOG.info(String.format(
-						"Added series %s to the download queue.", series));
-			} else {
-				LOG.warn("Unable to write the NZB to ["
-						+ destinationDirectory.getAbsolutePath() + "]");
+	public void downloadNzb(SeriesDownload download) {
+		if (writeNzbToDisk(download, nzbQueueDirectory)) {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug(String.format("Wrote %s to the nzb downloder queue.",
+						download));
 			}
 		} else {
-			LOG.warn("Unable to add Series " + series
-					+ " to the series download queue");
+			LOG.warn("Unable to write the NZB to ["
+					+ nzbQueueDirectory.getAbsolutePath() + "]");
 		}
 	}
 
@@ -161,7 +106,7 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 	 * 
 	 * @param seriesDownload
 	 *            the series download
-	 * @param destinationDirectory
+	 * @param nzbQueueDirectory
 	 *            the destination directory
 	 */
 	private boolean writeNzbToDisk(SeriesDownload seriesDownload,
@@ -272,6 +217,9 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 				}
 			}
 		}
+
+		// Sort the list in ascending order by season/episode
+		Collections.sort(seriesList);
 
 		return seriesList;
 	}
