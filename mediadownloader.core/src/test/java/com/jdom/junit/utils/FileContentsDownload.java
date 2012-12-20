@@ -13,18 +13,29 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.junit.utils;
+ */
+package com.jdom.junit.utils;
+
+import java.io.IOException;
+
+import org.apache.commons.io.IOUtils;
+import org.jboss.logging.Logger;
 
 import com.jdom.mediadownloader.services.UrlDownloadService;
-import com.jdom.util.file.FileUtils;
 
 public class FileContentsDownload implements UrlDownloadService {
 
+	private static final Logger LOG = Logger
+			.getLogger(FileContentsDownload.class);
+
 	@Override
 	public String downloadUrlContents(String path) {
-		String fileContents = FileUtils.readFile(FileContentsDownload.class,
-				path);
-
-		return fileContents;
+		try {
+			return IOUtils.toString(FileContentsDownload.class
+					.getResourceAsStream(path));
+		} catch (IOException e) {
+			LOG.error("Error reading path [" + path + "]", e);
+			return null;
+		}
 	}
 }

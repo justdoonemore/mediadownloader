@@ -27,7 +27,6 @@ import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.UrlDownloadService;
 import com.jdom.util.regex.RegexMatch;
 import com.jdom.util.regex.RegexUtil;
-import com.jdom.util.string.StringUtil;
 
 /**
  * Provides common functionality between all link finders.
@@ -83,7 +82,7 @@ public abstract class AbstractSeriesLinkFinder implements SeriesLinkFinder {
 
 		String seriesUrl = getSeriesSearchPage(series);
 
-		if (StringUtil.isEmpty(seriesUrl)) {
+		if (seriesUrl == null || seriesUrl.isEmpty()) {
 			LOG.warn("Unable to find a specific url for series " + series
 					+ "!  Returning empty list of matches...");
 		} else {

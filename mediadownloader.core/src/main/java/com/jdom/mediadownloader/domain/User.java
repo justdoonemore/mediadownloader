@@ -21,9 +21,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import com.jdom.util.compare.CompareUtil;
 
 @Entity
 public class User extends AbstractEntity<User> {
@@ -53,12 +52,14 @@ public class User extends AbstractEntity<User> {
 	 * 
 	 * @return the id for this entity object
 	 */
+	@Override
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public int getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -92,18 +93,16 @@ public class User extends AbstractEntity<User> {
 
 	@Override
 	public boolean equals(Object other) {
-		boolean equal = false;
-
 		if (other instanceof User) {
-			User user = (User) other;
+			User that = (User) other;
 
-			equal = CompareUtil.isEqual(this.getName(), user.getName())
-					&& CompareUtil.isEqual(this.getEmailAddress(),
-							user.getEmailAddress());
-
+			EqualsBuilder builder = new EqualsBuilder();
+			builder.append(this.getName(), that.getName());
+			builder.append(this.getEmailAddress(), that.getEmailAddress());
+			return builder.isEquals();
 		}
 
-		return equal;
+		return false;
 	}
 
 	/**

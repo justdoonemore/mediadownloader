@@ -4,14 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jdom</groupId>
 	<artifactId>mediadownloader</artifactId>
-	<version>0.0.6</version>
+	<version>0.0.7</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<log4j.version>1.2.16</log4j.version>
 		<jdk.compliance.version>1.6</jdk.compliance.version>
 		<junit.version>4.10</junit.version>
-		<jmock.version>2.5.1</jmock.version>
 		<util.io.version>0.0.1</util.io.version>
 		<util.lang.version>0.0.1</util.lang.version>
 		<util.time.version>0.0.1</util.time.version>
@@ -83,7 +82,7 @@
 				<artifactId>util.io</artifactId>
 				<version>${util.io.version}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>util.lang</artifactId>
@@ -154,24 +153,6 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.jmock</groupId>
-				<artifactId>jmock-junit4</artifactId>
-				<version>${jmock.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.jmock</groupId>
-				<artifactId>jmock-legacy</artifactId>
-				<version>${jmock.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>util.io</artifactId>
-				<version>${util.io.version}</version>
 			</dependency>
 
 			<dependency>

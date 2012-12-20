@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.jdom</groupId>
 		<artifactId>mediadownloader</artifactId>
-		<version>0.0.6</version>
+		<version>0.0.7</version>
 	</parent>
 	<artifactId>mediadownloader.series</artifactId>
 
@@ -13,6 +13,16 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>mediadownloader.core</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>util.lang</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>util.io</artifactId>
 		</dependency>
 
 		<!-- Test Dependencies -->

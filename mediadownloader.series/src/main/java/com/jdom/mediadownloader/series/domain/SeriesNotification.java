@@ -25,11 +25,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.jdom.mediadownloader.domain.AbstractEntity;
 import com.jdom.mediadownloader.domain.User;
-import com.jdom.util.compare.CompareUtil;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "seriesid",
@@ -72,19 +72,16 @@ public class SeriesNotification extends AbstractEntity<SeriesNotification> {
 
 	@Override
 	public boolean equals(Object other) {
-		boolean equal = false;
-
 		if (other instanceof SeriesNotification) {
 			SeriesNotification that = (SeriesNotification) other;
 
-			equal = CompareUtil.isEqual(this.getSeries(), that.getSeries());
-
-			if (equal) {
-				equal = CompareUtil.isEqual(this.getUser(), that.getUser());
-			}
+			EqualsBuilder builder = new EqualsBuilder();
+			builder.append(this.getSeries(), that.getSeries());
+			builder.append(this.getUser(), that.getUser());
+			return builder.isEquals();
 		}
 
-		return equal;
+		return false;
 	}
 
 	/**
@@ -92,7 +89,7 @@ public class SeriesNotification extends AbstractEntity<SeriesNotification> {
 	 */
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(getUser()).append(getSeries())
+		return new HashCodeBuilder().append(getSeries()).append(getUser())
 				.toHashCode();
 	}
 
