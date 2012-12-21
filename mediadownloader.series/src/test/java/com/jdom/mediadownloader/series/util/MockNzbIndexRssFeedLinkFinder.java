@@ -17,16 +17,12 @@
 package com.jdom.mediadownloader.series.util;
 
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.util.NzbIndexRssFeedLinkFinder;
-import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.UrlDownloadService;
 
 public class MockNzbIndexRssFeedLinkFinder extends NzbIndexRssFeedLinkFinder {
 
-	public MockNzbIndexRssFeedLinkFinder(
-			ConfigurationManagerService configurationManagerService,
-			UrlDownloadService downloadService) {
-		super(configurationManagerService, downloadService);
+	public MockNzbIndexRssFeedLinkFinder(UrlDownloadService downloadService) {
+		super("", new String[0], downloadService);
 	}
 
 	private String searchUrl;

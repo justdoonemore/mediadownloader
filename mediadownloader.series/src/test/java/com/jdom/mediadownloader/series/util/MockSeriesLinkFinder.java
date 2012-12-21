@@ -17,8 +17,6 @@
 package com.jdom.mediadownloader.series.util;
 
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.util.NzbIndexRssFeedLinkFinder;
-import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.UrlDownloadService;
 
 /**
@@ -32,10 +30,8 @@ import com.jdom.mediadownloader.services.UrlDownloadService;
  */
 public class MockSeriesLinkFinder extends NzbIndexRssFeedLinkFinder {
 
-	public MockSeriesLinkFinder(
-			ConfigurationManagerService configurationManagerService,
-			UrlDownloadService downloadService) {
-		super(configurationManagerService, downloadService);
+	public MockSeriesLinkFinder(UrlDownloadService downloadService) {
+		super(null, new String[0], downloadService);
 	}
 
 	private String searchUrl;

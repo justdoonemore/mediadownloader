@@ -16,11 +16,9 @@
  */
 package com.jdom.mediadownloader.series.download;
 
-import java.io.File;
+import java.util.List;
 
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.util.file.FileWrapper;
-import com.jdom.util.time.Duration;
 
 /**
  * @author djohnson
@@ -29,24 +27,8 @@ import com.jdom.util.time.Duration;
 public interface DownloadedNzbMover {
 
 	/**
-	 * @param tvDirectory
-	 * @param timeAgoLastModified
-	 * @param directoryWithDownload
-	 * @param downloadedEpisodeName
-	 * @param series
-	 * @return true if moved
-	 */
-	boolean moveSeries(File tvDirectory, Duration timeAgoLastModified,
-			FileWrapper directoryWithDownload, String downloadedEpisodeName,
-			Series series);
-
-	/**
-	 * @param timeAgoLastModified
-	 * @param directoryWithDownload
-	 * @param destination
 	 * @return
 	 */
-	boolean moveMovie(Duration timeAgoLastModified,
-			FileWrapper directoryWithDownload, File destination);
+	List<Series> handleRetrievedNzbs();
 
 }

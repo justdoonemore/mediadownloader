@@ -14,12 +14,26 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 	<!-- Configuration properties -->
 	<util:constant id="nzbQueueDirectory"
 		static-field="com.jdom.mediadownloader.series.SeriesConfiguration.NZB_QUEUE_DIRECTORY" />
+	<util:constant id="nzbDownloadedDirectory"
+		static-field="com.jdom.mediadownloader.series.SeriesConfiguration.NZB_DOWNLOADED_DIRECTORY" />
+	<util:constant id="archivedTvDirectory"
+		static-field="com.jdom.mediadownloader.series.SeriesConfiguration.ARCHIVED_TV_DIRECTORY" />
+	<util:constant id="archivedMoviesDirectory"
+		static-field="com.jdom.mediadownloader.series.SeriesConfiguration.ARCHIVED_MOVIES_DIRECTORY" />
+	<util:constant id="timeAgoLastModified"
+		static-field="com.jdom.mediadownloader.series.SeriesConfiguration.TIME_AGO_LAST_MODIFIED" />
+	<util:constant id="templateEmail"
+		static-field="com.jdom.mediadownloader.series.SeriesConfiguration.TEMPLATE_EMAIL" />
+	<util:constant id="seriesSearchUrl"
+		static-field="com.jdom.mediadownloader.series.SeriesConfiguration.SERIES_SEARCH_URL" />
+	<util:constant id="seriesDownloadTitleExclusions"
+		static-field="com.jdom.mediadownloader.series.SeriesConfiguration.SERIES_DOWNLOAD_TITLE_EXCLUSIONS" />
 
 	<!-- Beans -->
 	<bean id="seriesDownloadEmailNotifier"
 		class="com.jdom.mediadownloader.services.SeriesDownloadEmailNotifier">
-		<constructor-arg ref="configurationManagerService" />
 		<constructor-arg ref="emailService" />
+		<constructor-arg ref="templateEmail" />
 	</bean>
 
 	<bean id="seriesUpdater" class="com.jdom.mediadownloader.series.download.SeriesUpdater">
@@ -52,12 +66,18 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<bean id="seriesLinkFinder"
 		class="com.jdom.mediadownloader.series.util.NzbIndexRssFeedLinkFinder">
-		<constructor-arg ref="configurationManagerService" />
+		<constructor-arg ref="seriesSearchUrl" />
+		<constructor-arg ref="seriesDownloadTitleExclusions" />
 		<constructor-arg ref="urlDownloadService" />
 	</bean>
 
 	<bean id="downloadedNzbMover"
-		class="com.jdom.mediadownloader.series.download.MoveFromSourceToDestinationDirectoryMover" />
+		class="com.jdom.mediadownloader.series.download.MoveFromSourceToDestinationDirectoryMover">
+		<constructor-arg ref="nzbDownloadedDirectory" />
+		<constructor-arg ref="archivedTvDirectory" />
+		<constructor-arg ref="archivedMoviesDirectory" />
+		<constructor-arg ref="timeAgoLastModified" />
+	</bean>
 
 	<bean id="nzbAdder"
 		class="com.jdom.mediadownloader.series.download.FileQueueNzbAdder">
@@ -66,7 +86,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 	<bean id="nzbDownloader" class="${nzbDownloader.impl}">
 		<constructor-arg ref="seriesDasFactory" />
-		<constructor-arg ref="configurationManagerService" />
 		<constructor-arg ref="urlDownloadService" />
 		<constructor-arg ref="downloadedNzbMover" />
 		<constructor-arg ref="nzbAdder" />

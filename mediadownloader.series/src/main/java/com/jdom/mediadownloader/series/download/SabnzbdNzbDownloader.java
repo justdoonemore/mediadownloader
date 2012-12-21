@@ -16,50 +16,23 @@
  */
 package com.jdom.mediadownloader.series.download;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
-import com.jdom.mediadownloader.series.util.SeriesUtil;
-import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.UrlDownloadService;
-import com.jdom.util.file.FileUtils;
-import com.jdom.util.file.FileWrapper;
-import com.jdom.util.file.filter.ExcludeStartsWith;
-import com.jdom.util.time.Duration;
 
 public class SabnzbdNzbDownloader implements NzbDownloader {
 
 	private static final Logger LOG = Logger
 			.getLogger(SabnzbdNzbDownloader.class);
 
-	public static final String UNPACK_PREFIX = "_UNPACK";
-
-	/**
-	 * The duration at which if the file last modified time is within, it won't
-	 * be picked up.
-	 */
-	private static final Duration TIME_AGO_LAST_MODIFIED = Duration
-			.getDuration("file.pickup.last.modified", new Duration(2,
-					TimeUnit.MINUTES));
-
-	protected final ConfigurationManagerService configurationManager;
-
 	protected final UrlDownloadService urlDownloadService;
-
-	private final FileFilter downloadedNzbsFilter;
 
 	private final List<SeriesDownloadListener> seriesDownloadListeners = new CopyOnWriteArrayList<SeriesDownloadListener>();
 
@@ -73,19 +46,11 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 	 * are still being unpacked.
 	 */
 	public SabnzbdNzbDownloader(final SeriesDasFactory dasFactory,
-			final ConfigurationManagerService configurationManager,
 			final UrlDownloadService urlDownloadService,
 			DownloadedNzbMover downloadedNzbMover, NzbAdder nzbAdder) {
-		this.configurationManager = configurationManager;
 		this.urlDownloadService = urlDownloadService;
 		this.downloadedNzbMover = downloadedNzbMover;
 		this.nzbAdder = nzbAdder;
-
-		// Prepare the exclusions filter
-		Collection<String> exclusionPrefixes = new HashSet<String>();
-		exclusionPrefixes.add(UNPACK_PREFIX);
-
-		downloadedNzbsFilter = new ExcludeStartsWith(exclusionPrefixes);
 	}
 
 	@Override
@@ -122,72 +87,9 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 
 	@Override
 	public List<Series> processDownloadedItems() {
-		final File downloadedDirectory = configurationManager
-				.getNzbDownloadedDirectory();
-		final File tvDirectory = configurationManager.getArchivedTvDirectory();
-		final File moviesDirectory = configurationManager
-				.getArchivedMoviesDirectory();
-
-		List<Series> seriesList = handleRetrievedNzbs(downloadedDirectory,
-				tvDirectory, moviesDirectory, TIME_AGO_LAST_MODIFIED);
+		List<Series> seriesList = downloadedNzbMover.handleRetrievedNzbs();
 
 		notifySeriesDownloadListeners(seriesList);
-
-		return seriesList;
-	}
-
-	/**
-	 * Handles the retrieved nzbs.
-	 * 
-	 * @param downloadedDirectory
-	 *            the directory where nzb contents were downloaded to
-	 * @param tvDirectory
-	 *            the directory to place tv shows in
-	 * @param moviesDirectory
-	 *            the directory to place movies in
-	 * @param timeAgoLastModified
-	 *            how long ago the last modified time must be before, for the
-	 *            file to be picked up
-	 * @return A list of series to be updated
-	 */
-	protected List<Series> handleRetrievedNzbs(File downloadedDirectory,
-			File tvDirectory, File moviesDirectory, Duration timeAgoLastModified) {
-		// Get a list of all contents of the downloaded directory,
-		// and exclude the ones being unpacked
-		Collection<File> downloads = FileUtils.getDirectoriesFromDirectory(
-				downloadedDirectory, false, downloadedNzbsFilter);
-		List<Series> seriesList = new ArrayList<Series>();
-
-		// Look for any series
-		for (File candidate : downloads) {
-			FileWrapper directoryWithDownload = new FileWrapper(candidate);
-
-			final String downloadedEpisodeName = directoryWithDownload
-					.getName();
-
-			Series series = SeriesUtil.parseSeries(downloadedEpisodeName);
-
-			// If a series was found
-			if (series != null) {
-				if (downloadedNzbMover.moveSeries(tvDirectory,
-						timeAgoLastModified, directoryWithDownload,
-						downloadedEpisodeName, series)) {
-					seriesList.add(series);
-				}
-			} else {
-				boolean movedMovie = downloadedNzbMover.moveMovie(
-						timeAgoLastModified, directoryWithDownload, new File(
-								moviesDirectory, downloadedEpisodeName));
-
-				if (!movedMovie && LOG.isDebugEnabled()) {
-					LOG.debug("Skipping moving movie [" + downloadedEpisodeName
-							+ "]");
-				}
-			}
-		}
-
-		// Sort the list in ascending order by season/episode
-		Collections.sort(seriesList);
 
 		return seriesList;
 	}

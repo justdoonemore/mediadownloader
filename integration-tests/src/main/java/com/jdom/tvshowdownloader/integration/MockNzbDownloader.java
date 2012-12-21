@@ -30,7 +30,6 @@ import com.jdom.mediadownloader.series.download.DownloadedNzbMover;
 import com.jdom.mediadownloader.series.download.NzbAdder;
 import com.jdom.mediadownloader.series.download.SabnzbdNzbDownloader;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
-import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.UrlDownloadService;
 
 public class MockNzbDownloader extends SabnzbdNzbDownloader implements
@@ -38,17 +37,10 @@ public class MockNzbDownloader extends SabnzbdNzbDownloader implements
 
 	public static ApplicationContext context;
 
-	private final File finishedDownloadsDirectory;
-
 	public MockNzbDownloader(SeriesDasFactory dasFactory,
-			ConfigurationManagerService configurationManager,
 			UrlDownloadService urlDownloadService,
 			DownloadedNzbMover downloadedNzbMover, NzbAdder nzbAdder) {
-		super(dasFactory, configurationManager, urlDownloadService,
-				downloadedNzbMover, nzbAdder);
-
-		finishedDownloadsDirectory = configurationManager
-				.getNzbDownloadedDirectory();
+		super(dasFactory, urlDownloadService, downloadedNzbMover, nzbAdder);
 	}
 
 	@Override
@@ -66,8 +58,9 @@ public class MockNzbDownloader extends SabnzbdNzbDownloader implements
 			for (String string : nzbs) {
 				File file = new File(SeriesConfiguration.NZB_QUEUE_DIRECTORY,
 						string);
-				File destinationFolder = new File(finishedDownloadsDirectory,
-						file.getName().replaceAll(".nzb", ""));
+				File destinationFolder = new File(
+						SeriesConfiguration.NZB_DOWNLOADED_DIRECTORY, file
+								.getName().replaceAll(".nzb", ""));
 				try {
 					org.apache.commons.io.FileUtils.moveFileToDirectory(file,
 							destinationFolder, true);

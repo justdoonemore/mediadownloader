@@ -23,7 +23,6 @@ import java.util.HashSet;
 import org.apache.log4j.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.UrlDownloadService;
 import com.jdom.util.regex.RegexMatch;
 import com.jdom.util.regex.RegexUtil;
@@ -40,14 +39,9 @@ public abstract class AbstractSeriesLinkFinder implements SeriesLinkFinder {
 
 	protected static String LINK_REGEX = "<a href=((\"|')?(.*?)(\"|'))?.*?</a>";
 
-	protected final ConfigurationManagerService configurationManagerService;
-
 	protected final UrlDownloadService urlDownloadService;
 
-	public AbstractSeriesLinkFinder(
-			ConfigurationManagerService configurationManager,
-			UrlDownloadService urlDownloadService) {
-		this.configurationManagerService = configurationManager;
+	public AbstractSeriesLinkFinder(UrlDownloadService urlDownloadService) {
 		this.urlDownloadService = urlDownloadService;
 	}
 

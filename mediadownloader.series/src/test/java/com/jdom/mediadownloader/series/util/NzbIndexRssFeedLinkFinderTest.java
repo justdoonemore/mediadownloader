@@ -26,14 +26,10 @@ import org.junit.Test;
 
 import com.jdom.junit.utils.FileContentsDownload;
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.util.NzbIndexRssFeedLinkFinder;
-import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.util.html.exception.MalformedURLException;
 
 public class NzbIndexRssFeedLinkFinderTest extends
 		AbstractSeriesLinkFinderTest<MockNzbIndexRssFeedLinkFinder> {
-
-	private static final ConfigurationManagerService NULL_CONFIGURATION_MANAGER = null;
 
 	@Override
 	@Before
@@ -65,12 +61,8 @@ public class NzbIndexRssFeedLinkFinderTest extends
 		Series simpsons = new Series("The Simpsons", 1, 1);
 
 		String seriesSearchUrl = new NzbIndexRssFeedLinkFinder(
-				NULL_CONFIGURATION_MANAGER, new FileContentsDownload()) {
-			@Override
-			String getSeriesDownloadUrl() {
-				return "http://@SHOW@/@AGE@";
-			}
-		}.getSeriesSearchPage(simpsons);
+				"http://@SHOW@/@AGE@", new String[0],
+				new FileContentsDownload()).getSeriesSearchPage(simpsons);
 
 		assertEquals("http://The.Simpsons/700", seriesSearchUrl);
 	}
@@ -81,19 +73,14 @@ public class NzbIndexRssFeedLinkFinderTest extends
 		Series simpsons = new Series("The Simpsons", 1, 2);
 
 		String seriesSearchUrl = new NzbIndexRssFeedLinkFinder(
-				NULL_CONFIGURATION_MANAGER, new FileContentsDownload()) {
-			@Override
-			String getSeriesDownloadUrl() {
-				return "http://@SHOW@/@AGE@";
-			}
-		}.getSeriesSearchPage(simpsons);
+				"http://@SHOW@/@AGE@", new String[0],
+				new FileContentsDownload()).getSeriesSearchPage(simpsons);
 
 		assertEquals("http://The.Simpsons/30", seriesSearchUrl);
 	}
 
 	@Override
 	protected MockNzbIndexRssFeedLinkFinder getLinkFinder() {
-		return new MockNzbIndexRssFeedLinkFinder(NULL_CONFIGURATION_MANAGER,
-				new FileContentsDownload());
+		return new MockNzbIndexRssFeedLinkFinder(new FileContentsDownload());
 	}
 }

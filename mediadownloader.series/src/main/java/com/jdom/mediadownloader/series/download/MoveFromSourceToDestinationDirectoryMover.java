@@ -18,11 +18,19 @@ package com.jdom.mediadownloader.series.download;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.util.SeriesUtil;
 import com.jdom.util.file.FileUtils;
 import com.jdom.util.file.FileWrapper;
+import com.jdom.util.file.filter.ExcludeStartsWith;
 import com.jdom.util.time.Duration;
 
 /**
@@ -32,6 +40,93 @@ import com.jdom.util.time.Duration;
 public class MoveFromSourceToDestinationDirectoryMover implements
 		DownloadedNzbMover {
 
+	private static final Logger LOG = Logger
+			.getLogger(MoveFromSourceToDestinationDirectoryMover.class);
+
+	public static final String UNPACK_PREFIX = "_UNPACK";
+
+	private final FileFilter downloadedNzbsFilter;
+
+	private final File moviesDirectory;
+
+	private final Duration timeAgoLastModified;
+
+	private final File tvDirectory;
+
+	private final File downloadedDirectory;
+
+	/**
+	 * @param downloadedDirectory
+	 *            the directory where nzb contents were downloaded to
+	 * @param tvDirectory
+	 *            the directory to place tv shows in
+	 * @param moviesDirectory
+	 *            the directory to place movies in
+	 * @param timeAgoLastModified
+	 *            how long ago the last modified time must be before, for the
+	 *            file to be picked up
+	 */
+	public MoveFromSourceToDestinationDirectoryMover(File downloadedDirectory,
+			File tvDirectory, File moviesDirectory, Duration timeAgoLastModified) {
+		this.downloadedDirectory = downloadedDirectory;
+		this.tvDirectory = tvDirectory;
+		this.moviesDirectory = moviesDirectory;
+		this.timeAgoLastModified = timeAgoLastModified;
+
+		// Prepare the exclusions filter
+		Collection<String> exclusionPrefixes = new HashSet<String>();
+		exclusionPrefixes.add(UNPACK_PREFIX);
+
+		downloadedNzbsFilter = new ExcludeStartsWith(exclusionPrefixes);
+	}
+
+	/**
+	 * Handles the retrieved nzbs.
+	 * 
+	 * 
+	 * @return A list of series to be updated
+	 */
+	@Override
+	public List<Series> handleRetrievedNzbs() {
+		// Get a list of all contents of the downloaded directory,
+		// and exclude the ones being unpacked
+		Collection<File> downloads = FileUtils.getDirectoriesFromDirectory(
+				downloadedDirectory, false, downloadedNzbsFilter);
+		List<Series> seriesList = new ArrayList<Series>();
+
+		// Look for any series
+		for (File candidate : downloads) {
+			FileWrapper directoryWithDownload = new FileWrapper(candidate);
+
+			final String downloadedEpisodeName = directoryWithDownload
+					.getName();
+
+			Series series = SeriesUtil.parseSeries(downloadedEpisodeName);
+
+			// If a series was found
+			if (series != null) {
+				if (moveSeries(tvDirectory, timeAgoLastModified,
+						directoryWithDownload, downloadedEpisodeName, series)) {
+					seriesList.add(series);
+				}
+			} else {
+				boolean movedMovie = moveMovie(timeAgoLastModified,
+						directoryWithDownload, new File(moviesDirectory,
+								downloadedEpisodeName));
+
+				if (!movedMovie && LOG.isDebugEnabled()) {
+					LOG.debug("Skipping moving movie [" + downloadedEpisodeName
+							+ "]");
+				}
+			}
+		}
+
+		// Sort the list in ascending order by season/episode
+		Collections.sort(seriesList);
+
+		return seriesList;
+	}
+
 	/**
 	 * @param tvDirectory
 	 * @param timeAgoLastModified
@@ -39,7 +134,6 @@ public class MoveFromSourceToDestinationDirectoryMover implements
 	 * @param downloadedEpisodeName
 	 * @param series
 	 */
-	@Override
 	public boolean moveSeries(File tvDirectory, Duration timeAgoLastModified,
 			FileWrapper directoryWithDownload, String downloadedEpisodeName,
 			Series series) {
@@ -74,7 +168,6 @@ public class MoveFromSourceToDestinationDirectoryMover implements
 	 * @param destination
 	 * @return
 	 */
-	@Override
 	public boolean moveMovie(Duration timeAgoLastModified,
 			FileWrapper directoryWithDownload, File destination) {
 		return moveContents(timeAgoLastModified, directoryWithDownload,

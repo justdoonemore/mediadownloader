@@ -18,7 +18,6 @@ package com.jdom.mediadownloader.series.download;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +30,6 @@ import org.junit.Test;
 
 import com.jdom.junit.utils.TestUtil;
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.util.time.Duration;
 import com.jdom.util.time.TimeUtil;
 
@@ -41,15 +39,7 @@ public class MoveFromSourceToDestinationDirectoryMoverTest {
 
 	private static final int TOTAL_DOWNLOADS = 4;
 
-	private final ConfigurationManagerService configurationManager = mock(ConfigurationManagerService.class);
-
-	// For this test it just needs to call a method on the configuration
-	// manager, null is ok to be returned
-	// TODO: This needs to be changed to just check the individual methods of
-	// the class under test
-	private final SabnzbdNzbDownloader nzbDownloader = new SabnzbdNzbDownloader(
-			null, configurationManager, null,
-			new MoveFromSourceToDestinationDirectoryMover(), null);
+	private MoveFromSourceToDestinationDirectoryMover directoryMover;
 
 	private File workingDir;
 
@@ -86,6 +76,10 @@ public class MoveFromSourceToDestinationDirectoryMoverTest {
 				"The Ultimate Fighter.S10E07.XVID");
 		seriesTwoFolder = createFolderWithFile(downloadedDirectory,
 				"Heroes.S10E07.XVID");
+
+		directoryMover = new MoveFromSourceToDestinationDirectoryMover(
+				downloadedDirectory, tvDirectory, moviesDirectory,
+				new Duration(LONG_AGO_IN_MILLIS, TimeUnit.MILLISECONDS));
 	}
 
 	@Test
@@ -133,7 +127,8 @@ public class MoveFromSourceToDestinationDirectoryMoverTest {
 			throws IOException {
 		// Create folder with _UNPACK prefix
 		File unpackPrefixFolder = createFolderWithFile(downloadedDirectory,
-				SabnzbdNzbDownloader.UNPACK_PREFIX + "_SHOULD_NOT_MOVE");
+				MoveFromSourceToDestinationDirectoryMover.UNPACK_PREFIX
+						+ "_SHOULD_NOT_MOVE");
 
 		makeFilesRealOld(movieOneFolder);
 		makeFilesRealOld(seriesOneFolder);
@@ -174,9 +169,7 @@ public class MoveFromSourceToDestinationDirectoryMoverTest {
 		int totalMoved = numberOfMoviesFoldersMoved + numberOfTvFoldersMoved;
 		int leftInDownloaded = numberOfFolderCreatedForTest - totalMoved;
 
-		List<Series> seriesList = nzbDownloader.handleRetrievedNzbs(
-				downloadedDirectory, tvDirectory, moviesDirectory,
-				new Duration(LONG_AGO_IN_MILLIS, TimeUnit.MILLISECONDS));
+		List<Series> seriesList = directoryMover.handleRetrievedNzbs();
 
 		assertEquals(numberOfTvFoldersMoved, seriesList.size());
 

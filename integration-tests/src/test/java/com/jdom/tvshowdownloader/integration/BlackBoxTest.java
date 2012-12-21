@@ -42,7 +42,6 @@ import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesNotification;
 import com.jdom.mediadownloader.series.download.queue.SeriesDownloadQueueManager;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
-import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.SeriesDASService;
 import com.jdom.mediadownloader.services.UserDASService;
 import com.jdom.util.email.Email;
@@ -67,8 +66,6 @@ public class BlackBoxTest {
 
 	private final Series raisingHopeSeries = new Series("Raising Hope", 3, 9);
 
-	private ConfigurationManagerService configurationManager;
-
 	private SeriesDasFactory dasFactory;
 
 	@BeforeClass
@@ -86,8 +83,6 @@ public class BlackBoxTest {
 
 		MediaDownloader.initializeContext();
 
-		configurationManager = BlackBoxTest
-				.getService(ConfigurationManagerService.class);
 		dasFactory = BlackBoxTest.getService(SeriesDasFactory.class);
 
 		createRequiredDirectories();
@@ -124,8 +119,7 @@ public class BlackBoxTest {
 	public void movesTvShowDownloadsToTvArchiveDir() {
 		startMediaDownloader();
 
-		File archivedTvDirectory = configurationManager
-				.getArchivedTvDirectory();
+		File archivedTvDirectory = getArchivedTvDirectory();
 		File simpsonsDir = new File(archivedTvDirectory, "The Simpsons");
 
 		assertTrue("Expected the simpsons directory to exist!",
@@ -148,8 +142,7 @@ public class BlackBoxTest {
 	public void doesNotDownloadOldEpisodes() {
 		startMediaDownloader();
 
-		File archivedTvDirectory = configurationManager
-				.getArchivedTvDirectory();
+		File archivedTvDirectory = getArchivedTvDirectory();
 		File simpsonsDir = new File(archivedTvDirectory, "The Simpsons");
 
 		assertTrue("Expected the simpsons directory to exist!",
@@ -170,8 +163,7 @@ public class BlackBoxTest {
 
 		startMediaDownloader();
 
-		File archivedTvDirectory = configurationManager
-				.getArchivedTvDirectory();
+		File archivedTvDirectory = getArchivedTvDirectory();
 		File simpsonsDir = new File(archivedTvDirectory, "The Simpsons");
 
 		assertTrue("Expected the simpsons directory to exist!",
@@ -196,8 +188,7 @@ public class BlackBoxTest {
 
 		startMediaDownloader();
 
-		File archivedTvDirectory = configurationManager
-				.getArchivedTvDirectory();
+		File archivedTvDirectory = getArchivedTvDirectory();
 		File simpsonsDir = new File(archivedTvDirectory, "The Simpsons");
 
 		assertTrue("Expected the simpsons directory to exist!",
@@ -239,8 +230,7 @@ public class BlackBoxTest {
 
 		startMediaDownloader();
 
-		File archivedMoviesDirectory = configurationManager
-				.getArchivedMoviesDirectory();
+		File archivedMoviesDirectory = getArchivedMoviesDirectory();
 		File expectedMovieDirectory = new File(archivedMoviesDirectory,
 				someMovieFile.getParentFile().getName());
 
@@ -254,6 +244,14 @@ public class BlackBoxTest {
 		assertTrue(
 				"Did not find expected file [" + expectedFile.getAbsolutePath()
 						+ "]!", expectedFile.isFile());
+	}
+
+	private static File getArchivedMoviesDirectory() {
+		return SeriesConfiguration.ARCHIVED_MOVIES_DIRECTORY;
+	}
+
+	private static File getArchivedTvDirectory() {
+		return SeriesConfiguration.ARCHIVED_TV_DIRECTORY;
 	}
 
 	private static void createIntegrationTestPropertiesFile() {
@@ -301,8 +299,8 @@ public class BlackBoxTest {
 	 * @return the file reference to the "movie" file
 	 */
 	private File placeDownloadedMovie(String movieName) {
-		File downloadedDir = configurationManager.getNzbDownloadedDirectory();
-		File someMovie = new File(downloadedDir, movieName);
+		File someMovie = new File(
+				SeriesConfiguration.ARCHIVED_MOVIES_DIRECTORY, movieName);
 		someMovie.mkdirs();
 		File someMovieFile = new File(someMovie, movieName + ".avi");
 		try {
@@ -316,9 +314,9 @@ public class BlackBoxTest {
 
 	private void createRequiredDirectories() {
 		SeriesConfiguration.NZB_QUEUE_DIRECTORY.mkdirs();
-		configurationManager.getNzbDownloadedDirectory().mkdirs();
-		configurationManager.getArchivedTvDirectory().mkdirs();
-		configurationManager.getArchivedMoviesDirectory().mkdirs();
+		SeriesConfiguration.NZB_DOWNLOADED_DIRECTORY.mkdirs();
+		SeriesConfiguration.ARCHIVED_TV_DIRECTORY.mkdirs();
+		SeriesConfiguration.ARCHIVED_MOVIES_DIRECTORY.mkdirs();
 	}
 
 	private void loadDatabase() {

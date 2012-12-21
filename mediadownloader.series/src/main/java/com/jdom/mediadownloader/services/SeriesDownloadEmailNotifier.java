@@ -29,14 +29,14 @@ import com.jdom.util.email.Email;
 
 public class SeriesDownloadEmailNotifier implements SeriesDownloadListener {
 
-	private final ConfigurationManagerService configurationManager;
-
 	private final EmailService emailService;
 
-	public SeriesDownloadEmailNotifier(ConfigurationManagerService configurationManager,
-			EmailService emailService) {
-		this.configurationManager = configurationManager;
+	private final Email templateEmail;
+
+	public SeriesDownloadEmailNotifier(EmailService emailService,
+			Email templateEmail) {
 		this.emailService = emailService;
+		this.templateEmail = templateEmail;
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class SeriesDownloadEmailNotifier implements SeriesDownloadListener {
 					.getUsersToNotifyForSeries(series);
 			if (!usersToNotify.isEmpty()) {
 				emailsToSend.add(createEmail(series, usersToNotify,
-						configurationManager.getTemplateEmail()));
+						templateEmail));
 			}
 		}
 

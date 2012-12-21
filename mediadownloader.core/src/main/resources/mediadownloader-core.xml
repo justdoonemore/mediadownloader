@@ -24,8 +24,6 @@ http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
 	<bean id="emailService" class="${emailService.impl}" />
 
-	<bean id="configurationManagerService" class="com.jdom.mediadownloader.services.ConfigurationManager" />
-
 	<bean id="mediaDownloader" class="com.jdom.mediadownloader.MediaDownloader">
 		<constructor-arg ref="applicationLock" />
 		<constructor-arg ref="mediaProcessorRegistry" />

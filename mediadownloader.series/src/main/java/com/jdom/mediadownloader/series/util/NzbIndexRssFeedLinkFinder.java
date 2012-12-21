@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.download.SeriesDownloadFinder;
-import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.UrlDownloadService;
 import com.jdom.util.regex.RegexMatch;
 import com.jdom.util.regex.RegexUtil;
@@ -55,19 +54,22 @@ public class NzbIndexRssFeedLinkFinder extends AbstractSeriesLinkFinder {
 
 	protected static final long TWO_MINUTES_IN_MILLIS = 2 * TimeConstants.MILLIS_PER_MINUTE;
 
-	public NzbIndexRssFeedLinkFinder(
-			ConfigurationManagerService configurationManager,
+	private final String seriesSearchUrl;
+
+	private final String[] seriesDownloadTitleExclusions;
+
+	public NzbIndexRssFeedLinkFinder(String seriesSearchUrl,
+			String[] seriesDownloadTitleExclusions,
 			UrlDownloadService downloadService) {
-		super(configurationManager, downloadService);
+		super(downloadService);
+		this.seriesSearchUrl = seriesSearchUrl;
+		this.seriesDownloadTitleExclusions = seriesDownloadTitleExclusions;
 	}
 
 	@Override
 	public Collection<SeriesDownload> findSeriesDownloads(List<Series> entities) {
-		String[] titleExclusions = configurationManagerService
-				.getSeriesDownloadTitleExclusions();
-
 		Collection<SeriesDownload> downloads = findSeriesDownloads(entities,
-				titleExclusions);
+				seriesDownloadTitleExclusions);
 
 		return downloads;
 	}
@@ -132,7 +134,7 @@ public class NzbIndexRssFeedLinkFinder extends AbstractSeriesLinkFinder {
 	}
 
 	String getSeriesDownloadUrl() {
-		return configurationManagerService.getSeriesDownloadUrl();
+		return seriesSearchUrl;
 	}
 
 	protected String getRegexPattern() {

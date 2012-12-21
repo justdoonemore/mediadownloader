@@ -17,6 +17,11 @@
 package com.jdom.mediadownloader.series;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
+import com.jdom.util.email.Email;
+import com.jdom.util.time.Duration;
 
 /**
  * Holds the String versions of configured properties.
@@ -29,7 +34,55 @@ public final class SeriesConfiguration {
 
 	}
 
+	private static final Pattern COMMA_PATTERN = Pattern.compile(",");
+
+	/**
+	 * Split a comma delimited string into a string array.
+	 * 
+	 * @param propertyValue
+	 *            the property value
+	 * @return the split string
+	 */
+	private static String[] getStringArray(String propertyValue) {
+		return (propertyValue == null) ? new String[0] : COMMA_PATTERN
+				.split(propertyValue);
+	}
+
 	public static final File NZB_QUEUE_DIRECTORY = new File(
 			System.getProperty("nzb.destination.dir"));
 
+	public static final File NZB_DOWNLOADED_DIRECTORY = new File(
+			System.getProperty("nzb.downloaded.dir"));
+
+	public static final File ARCHIVED_TV_DIRECTORY = new File(
+			System.getProperty("archived.tv.directory"));
+
+	public static final File ARCHIVED_MOVIES_DIRECTORY = new File(
+			System.getProperty("archived.movies.directory"));
+
+	/**
+	 * The duration at which if the file last modified time is within, it won't
+	 * be picked up.
+	 */
+	public static final Duration TIME_AGO_LAST_MODIFIED = Duration.getDuration(
+			"file.pickup.last.modified", new Duration(2, TimeUnit.MINUTES));
+
+	public static final String SERIES_SEARCH_URL = System
+			.getProperty("series.download.url");
+
+	private static final String EMAIL_SERVER = System
+			.getProperty("email.server");
+	private static final String EMAIL_USERNAME = System
+			.getProperty("email.username");
+	private static final String EMAIL_PASSWORD = System
+			.getProperty("email.password");
+	public static final Email TEMPLATE_EMAIL = new Email(EMAIL_SERVER,
+			EMAIL_USERNAME, EMAIL_PASSWORD, null, null, null);
+
+	public static final String[] SERIES_DOWNLOAD_TITLE_EXCLUSIONS;
+	static {
+		SERIES_DOWNLOAD_TITLE_EXCLUSIONS = SeriesConfiguration
+				.getStringArray(System.getProperty(
+						"series.download.title.exclusions", null));
+	}
 }
