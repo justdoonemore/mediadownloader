@@ -28,8 +28,6 @@ import com.jdom.util.email.Email;
  */
 public interface ConfigurationManagerService {
 
-	File getNzbDestinationDirectory();
-
 	Email getTemplateEmail();
 
 	String getSeriesDownloadUrl();

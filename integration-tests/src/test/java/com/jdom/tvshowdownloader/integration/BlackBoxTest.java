@@ -37,6 +37,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.jdom.mediadownloader.MediaDownloader;
 import com.jdom.mediadownloader.domain.User;
+import com.jdom.mediadownloader.series.SeriesConfiguration;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesNotification;
 import com.jdom.mediadownloader.series.download.queue.SeriesDownloadQueueManager;
@@ -314,7 +315,7 @@ public class BlackBoxTest {
 	}
 
 	private void createRequiredDirectories() {
-		configurationManager.getNzbDestinationDirectory().mkdirs();
+		SeriesConfiguration.NZB_QUEUE_DIRECTORY.mkdirs();
 		configurationManager.getNzbDownloadedDirectory().mkdirs();
 		configurationManager.getArchivedTvDirectory().mkdirs();
 		configurationManager.getArchivedMoviesDirectory().mkdirs();

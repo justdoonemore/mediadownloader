@@ -14,18 +14,39 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jdom.mediadownloader.services;
+package com.jdom.mediadownloader.series.download;
 
-import java.util.List;
+import java.io.File;
 
 import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.util.file.FileWrapper;
+import com.jdom.util.time.Duration;
 
 /**
  * @author djohnson
- *
+ * 
  */
-public interface SeriesNotifierService {
+public interface DownloadedNzbMover {
 
-	public abstract void sendEmails(List<Series> seriesList);
+	/**
+	 * @param tvDirectory
+	 * @param timeAgoLastModified
+	 * @param directoryWithDownload
+	 * @param downloadedEpisodeName
+	 * @param series
+	 * @return true if moved
+	 */
+	boolean moveSeries(File tvDirectory, Duration timeAgoLastModified,
+			FileWrapper directoryWithDownload, String downloadedEpisodeName,
+			Series series);
+
+	/**
+	 * @param timeAgoLastModified
+	 * @param directoryWithDownload
+	 * @param destination
+	 * @return
+	 */
+	boolean moveMovie(Duration timeAgoLastModified,
+			FileWrapper directoryWithDownload, File destination);
 
 }

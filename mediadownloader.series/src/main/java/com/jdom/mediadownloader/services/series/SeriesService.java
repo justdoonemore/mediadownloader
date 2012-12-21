@@ -54,7 +54,7 @@ public class SeriesService {
 				.getSeriesNotificationDAS();
 
 		Collection<SeriesNotification> notifications = seriesNotificationDAS
-				.getSeriesNotificationsForSeries(series);
+				.getSeriesNotificationsForSeriesByName(series);
 
 		for (SeriesNotification notification : notifications) {
 			users.add(notification.getUser());

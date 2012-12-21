@@ -25,9 +25,6 @@ public class ConfigurationManager implements ConfigurationManagerService {
 
 	private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
-	private static final File NZB_DESTINATION_DIRECTORY = new File(
-			System.getProperty("nzb.destination.dir"));
-
 	private static final String EMAIL_SERVER = System
 			.getProperty("email.server");
 	private static final String EMAIL_USERNAME = System
@@ -48,11 +45,6 @@ public class ConfigurationManager implements ConfigurationManagerService {
 			System.getProperty("archived.movies.directory"));
 
 	private volatile static String[] seriesDownloadTitleExclusions = null;
-
-	@Override
-	public File getNzbDestinationDirectory() {
-		return NZB_DESTINATION_DIRECTORY;
-	}
 
 	@Override
 	public Email getTemplateEmail() {

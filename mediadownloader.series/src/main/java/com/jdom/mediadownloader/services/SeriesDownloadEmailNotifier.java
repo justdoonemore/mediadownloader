@@ -17,28 +17,39 @@
 package com.jdom.mediadownloader.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import com.jdom.mediadownloader.domain.User;
 import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.download.SeriesDownloadListener;
 import com.jdom.mediadownloader.services.series.SeriesService;
 import com.jdom.util.email.Email;
 
-public class SeriesNotifier implements SeriesNotifierService {
+public class SeriesDownloadEmailNotifier implements SeriesDownloadListener {
 
 	private final ConfigurationManagerService configurationManager;
 
 	private final EmailService emailService;
 
-	public SeriesNotifier(ConfigurationManagerService configurationManager,
+	public SeriesDownloadEmailNotifier(ConfigurationManagerService configurationManager,
 			EmailService emailService) {
 		this.configurationManager = configurationManager;
 		this.emailService = emailService;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.jdom.mediadownloader.series.download.SeriesDownloadListener#downloadComplete(com.jdom.mediadownloader.series.domain.Series)
+	 */
 	@Override
-	public void sendEmails(List<Series> seriesList) {
+	public void downloadComplete(Series series) {
+		sendEmails(Arrays.asList(series));
+	}
+
+	private void sendEmails(List<Series> seriesList) {
 
 		Collection<Email> emailsToSend = new ArrayList<Email>();
 

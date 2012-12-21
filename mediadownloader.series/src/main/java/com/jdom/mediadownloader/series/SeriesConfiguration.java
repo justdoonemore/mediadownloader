@@ -14,34 +14,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.jdom.mediadownloader.series.download;
+package com.jdom.mediadownloader.series;
 
-import java.util.List;
+import java.io.File;
 
-import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.domain.SeriesDownload;
+/**
+ * Holds the String versions of configured properties.
+ * 
+ * @author djohnson
+ */
+public final class SeriesConfiguration {
 
-public interface NzbDownloader {
+	private SeriesConfiguration() {
 
-	/**
-	 * Download the actual NZB.
-	 */
-	void downloadNzb(SeriesDownload download);
+	}
 
-	/**
-	 * Processes downloaded items.
-	 * 
-	 * @return the downloaded items
-	 */
-	List<Series> processDownloadedItems();
+	public static final File NZB_QUEUE_DIRECTORY = new File(
+			System.getProperty("nzb.destination.dir"));
 
-	/**
-	 * Add a {@link SeriesDownloadListener}.
-	 * 
-	 * @param listener
-	 *            the listener to add
-	 * @return the listener
-	 */
-	SeriesDownloadListener addSeriesDownloadListener(
-			SeriesDownloadListener listener);
 }

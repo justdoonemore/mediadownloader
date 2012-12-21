@@ -35,7 +35,7 @@ import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.util.time.Duration;
 import com.jdom.util.time.TimeUtil;
 
-public class SabnzbdNzbDownloaderTest {
+public class MoveFromSourceToDestinationDirectoryMoverTest {
 
 	private static final long LONG_AGO_IN_MILLIS = 100000;
 
@@ -45,8 +45,11 @@ public class SabnzbdNzbDownloaderTest {
 
 	// For this test it just needs to call a method on the configuration
 	// manager, null is ok to be returned
+	// TODO: This needs to be changed to just check the individual methods of
+	// the class under test
 	private final SabnzbdNzbDownloader nzbDownloader = new SabnzbdNzbDownloader(
-			null, configurationManager, null, null);
+			null, configurationManager, null,
+			new MoveFromSourceToDestinationDirectoryMover(), null);
 
 	private File workingDir;
 
@@ -66,7 +69,8 @@ public class SabnzbdNzbDownloaderTest {
 
 	@Before
 	public void setUp() throws IOException {
-		workingDir = TestUtil.setupTestClassDir(SabnzbdNzbDownloaderTest.class);
+		workingDir = TestUtil
+				.setupTestClassDir(MoveFromSourceToDestinationDirectoryMoverTest.class);
 
 		downloadedDirectory = new File(workingDir, "downloaded");
 		tvDirectory = new File(workingDir, "tv");
@@ -138,64 +142,6 @@ public class SabnzbdNzbDownloaderTest {
 		makeFilesRealOld(unpackPrefixFolder);
 
 		testContentsMoved(2, 2, 5);
-	}
-
-	@Test
-	public void newerSeasonTakesPrecedence() {
-		Series seriesObj = new Series("Test", 2, 5);
-
-		// The download
-		Series series = seriesObj.clone();
-		series.setSeason(3);
-		series.setEpisode(2);
-
-		seriesObj = nzbDownloader.prepareSeriesUpdate(seriesObj, series);
-
-		series.incrementEpisode();
-
-		assertEquals(series, seriesObj);
-	}
-
-	@Test
-	public void newerEpisodeTakesPrecedence() {
-		Series seriesObj = new Series("Test", 2, 5);
-
-		// The download
-		Series series = seriesObj.clone();
-		series.setEpisode(6);
-
-		seriesObj = nzbDownloader.prepareSeriesUpdate(seriesObj, series);
-
-		series.incrementEpisode();
-
-		assertEquals(series, seriesObj);
-	}
-
-	@Test
-	public void newerDBTakesPrecedence() {
-		Series seriesObj = new Series("Test", 5, 3);
-
-		// The download
-		Series series = seriesObj.clone();
-		series.setEpisode(1);
-
-		Series seriesNew = nzbDownloader.prepareSeriesUpdate(seriesObj, series);
-
-		assertEquals(seriesObj, seriesNew);
-	}
-
-	@Test
-	public void equalIncrementsEpisode() {
-		Series seriesObj = new Series("Test", 5, 3);
-
-		// The download
-		Series series = seriesObj.clone();
-
-		Series seriesNew = nzbDownloader.prepareSeriesUpdate(seriesObj, series);
-
-		seriesObj.incrementEpisode();
-
-		assertEquals(seriesObj, seriesNew);
 	}
 
 	/**

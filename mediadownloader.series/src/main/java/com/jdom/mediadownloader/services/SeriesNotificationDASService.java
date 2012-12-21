@@ -41,6 +41,6 @@ public interface SeriesNotificationDASService extends AbstractDASService<SeriesN
 	 *            the series
 	 * @return the collection of SeriesNotification objects
 	 */
-	public Collection<SeriesNotification> getSeriesNotificationsForSeries(
+	public Collection<SeriesNotification> getSeriesNotificationsForSeriesByName(
 			Series series);
 }

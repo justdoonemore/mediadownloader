@@ -24,11 +24,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import com.jdom.mediadownloader.series.SeriesConfiguration;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
+import com.jdom.mediadownloader.series.download.DownloadedNzbMover;
+import com.jdom.mediadownloader.series.download.NzbAdder;
 import com.jdom.mediadownloader.series.download.SabnzbdNzbDownloader;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
 import com.jdom.mediadownloader.services.ConfigurationManagerService;
-import com.jdom.mediadownloader.services.SeriesNotifierService;
 import com.jdom.mediadownloader.services.UrlDownloadService;
 
 public class MockNzbDownloader extends SabnzbdNzbDownloader implements
@@ -41,9 +43,9 @@ public class MockNzbDownloader extends SabnzbdNzbDownloader implements
 	public MockNzbDownloader(SeriesDasFactory dasFactory,
 			ConfigurationManagerService configurationManager,
 			UrlDownloadService urlDownloadService,
-			SeriesNotifierService seriesNotifier) {
+			DownloadedNzbMover downloadedNzbMover, NzbAdder nzbAdder) {
 		super(dasFactory, configurationManager, urlDownloadService,
-				seriesNotifier);
+				downloadedNzbMover, nzbAdder);
 
 		finishedDownloadsDirectory = configurationManager
 				.getNzbDownloadedDirectory();
@@ -53,15 +55,17 @@ public class MockNzbDownloader extends SabnzbdNzbDownloader implements
 	public void downloadNzb(SeriesDownload download) {
 		super.downloadNzb(download);
 
-		String[] nzbs = nzbQueueDirectory.list(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".nzb");
-			}
-		});
+		String[] nzbs = SeriesConfiguration.NZB_QUEUE_DIRECTORY
+				.list(new FilenameFilter() {
+					@Override
+					public boolean accept(File dir, String name) {
+						return name.endsWith(".nzb");
+					}
+				});
 		if (nzbs != null) {
 			for (String string : nzbs) {
-				File file = new File(nzbQueueDirectory, string);
+				File file = new File(SeriesConfiguration.NZB_QUEUE_DIRECTORY,
+						string);
 				File destinationFolder = new File(finishedDownloadsDirectory,
 						file.getName().replaceAll(".nzb", ""));
 				try {

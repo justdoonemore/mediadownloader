@@ -13,9 +13,12 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.mediadownloader.services;
+ */
+package com.jdom.mediadownloader.services;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
@@ -48,11 +51,14 @@ public class SeriesNotificationDAS extends AbstractDAS<SeriesNotification>
 	 * @return
 	 */
 	@Override
-	public Collection<SeriesNotification> getSeriesNotificationsForSeries(
+	public Collection<SeriesNotification> getSeriesNotificationsForSeriesByName(
 			Series series) {
-		Collection<SeriesNotification> notifications = runQuery("SELECT c FROM "
-				+ SeriesNotification.class.getSimpleName()
-				+ " c where c.series = '" + series.getId() + "'");
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("name", series.getName());
+
+		Collection<SeriesNotification> notifications = runQuery(
+				"SELECT c FROM " + SeriesNotification.class.getSimpleName()
+						+ " c where c.series.name = :name", params);
 
 		return notifications;
 	}

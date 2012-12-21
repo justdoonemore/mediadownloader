@@ -16,32 +16,37 @@
  */
 package com.jdom.mediadownloader.series.download;
 
-import java.util.List;
+import java.io.File;
 
-import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
+import com.jdom.util.file.FileUtils;
 
-public interface NzbDownloader {
+/**
+ * @author djohnson
+ * 
+ */
+public class FileQueueNzbAdder implements NzbAdder {
+
+	private final File destinationDirectory;
+
+	public FileQueueNzbAdder(File destinationDirectory) {
+		this.destinationDirectory = destinationDirectory;
+	}
 
 	/**
-	 * Download the actual NZB.
-	 */
-	void downloadNzb(SeriesDownload download);
-
-	/**
-	 * Processes downloaded items.
+	 * {@inheritDoc}
 	 * 
-	 * @return the downloaded items
+	 * @see com.jdom.mediadownloader.series.download.NzbAdder#addNzb(com.jdom.mediadownloader.series.domain.SeriesDownload,
+	 *      byte[])
 	 */
-	List<Series> processDownloadedItems();
+	@Override
+	public boolean addNzb(SeriesDownload download, byte[] bytes) {
 
-	/**
-	 * Add a {@link SeriesDownloadListener}.
-	 * 
-	 * @param listener
-	 *            the listener to add
-	 * @return the listener
-	 */
-	SeriesDownloadListener addSeriesDownloadListener(
-			SeriesDownloadListener listener);
+		// Create a file and temp file which we'll write first then rename
+		File finalFile = new File(destinationDirectory, download.getNzbTitle());
+
+		// Write the temp file to disk
+		return FileUtils.writeFileToDisk(finalFile, bytes, true);
+	}
+
 }

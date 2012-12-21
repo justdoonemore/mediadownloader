@@ -16,32 +16,20 @@
  */
 package com.jdom.mediadownloader.series.download;
 
-import java.util.List;
-
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.domain.SeriesDownload;
 
-public interface NzbDownloader {
-
-	/**
-	 * Download the actual NZB.
-	 */
-	void downloadNzb(SeriesDownload download);
+/**
+ * @author djohnson
+ * 
+ */
+public interface SeriesDownloadListener {
 
 	/**
-	 * Processes downloaded items.
+	 * Notify a download has completed.
 	 * 
-	 * @return the downloaded items
+	 * @param series
+	 *            the downloaded series episode
 	 */
-	List<Series> processDownloadedItems();
+	void downloadComplete(Series series);
 
-	/**
-	 * Add a {@link SeriesDownloadListener}.
-	 * 
-	 * @param listener
-	 *            the listener to add
-	 * @return the listener
-	 */
-	SeriesDownloadListener addSeriesDownloadListener(
-			SeriesDownloadListener listener);
 }
