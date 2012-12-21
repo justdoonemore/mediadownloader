@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -38,13 +39,14 @@ import com.jdom.mediadownloader.MediaDownloader;
 import com.jdom.mediadownloader.domain.User;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesNotification;
-import com.jdom.mediadownloader.series.download.util.SeriesDownloadUtil;
+import com.jdom.mediadownloader.series.download.queue.SeriesDownloadQueueManager;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
 import com.jdom.mediadownloader.services.ConfigurationManagerService;
 import com.jdom.mediadownloader.services.SeriesDASService;
 import com.jdom.mediadownloader.services.UserDASService;
 import com.jdom.util.email.Email;
 import com.jdom.util.properties.PropertiesUtil;
+import com.jdom.util.time.Duration;
 import com.jdom.util.time.TimeUtil;
 import com.jdom.util.time.TimeUtilTest;
 
@@ -113,7 +115,8 @@ public class BlackBoxTest {
 
 		assertFalse(
 				"The SeriesDownload should have been removed from the queue!",
-				SeriesDownloadUtil.containsSeries(simpsonsSeries));
+				getService(SeriesDownloadQueueManager.class).containsEntity(
+						simpsonsSeries));
 	}
 
 	@Test
@@ -162,9 +165,7 @@ public class BlackBoxTest {
 	@Test
 	public void doesNotDownloadEpisodesAlreadyInDownloadQueue() {
 		// episode 7 is already downloading
-		Series alreadyDownloadingEpisode = getSimpsonsEpisode();
-		alreadyDownloadingEpisode.setEpisode(7);
-		SeriesDownloadUtil.addSeries(alreadyDownloadingEpisode);
+		alreadyDownloadingEpisodeSevenOfSimpsons();
 
 		startMediaDownloader();
 
@@ -185,10 +186,9 @@ public class BlackBoxTest {
 	@Test
 	public void downloadsEpisodesExpiredInDownloadQueue() {
 		// Freeze time to three hours ago
-		TimeUtilTest
-				.freezeTime(TimeUtil.currentTimeMillis()
-						- (configurationManager.getSeriesDownloadTimeToLive() * 60000 * 60));
-		SeriesDownloadUtil.addSeries(new Series("The Simpsons", 24, 7));
+		TimeUtilTest.freezeTime(TimeUtil.currentTimeMillis()
+				- (new Duration(3, TimeUnit.HOURS).toMillis().value));
+		alreadyDownloadingEpisodeSevenOfSimpsons();
 
 		// Now it's three hours later, and the queue entry is expired
 		TimeUtilTest.resumeTime();
@@ -282,6 +282,13 @@ public class BlackBoxTest {
 	 */
 	private static <T> T getService(Class<T> serviceInterface) {
 		return MockNzbDownloader.context.getBean(serviceInterface);
+	}
+
+	private void alreadyDownloadingEpisodeSevenOfSimpsons() {
+		Series alreadyDownloadingEpisode = getSimpsonsEpisode();
+		alreadyDownloadingEpisode.setEpisode(7);
+		SeriesDownloadQueueManager queueManager = getService(SeriesDownloadQueueManager.class);
+		queueManager.addEntity(alreadyDownloadingEpisode);
 	}
 
 	/**

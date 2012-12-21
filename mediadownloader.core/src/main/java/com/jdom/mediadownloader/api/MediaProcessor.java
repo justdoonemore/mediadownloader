@@ -22,6 +22,7 @@ import java.util.List;
 import com.jdom.mediadownloader.domain.AbstractEntity;
 import com.jdom.mediadownloader.domain.EntityDownload;
 import com.jdom.mediadownloader.download.queue.EntityDownloadQueueManager;
+import com.jdom.util.time.Duration;
 
 /**
  * @author djohnson
@@ -35,11 +36,6 @@ public interface MediaProcessor<T extends AbstractEntity<T>, U extends EntityDow
 	 * @return the name
 	 */
 	String getName();
-
-	/**
-	 * Purge any failed downloads.
-	 */
-	void purgeFailedDownloads();
 
 	/**
 	 * Get the list of entities this processor monitors.
@@ -67,8 +63,10 @@ public interface MediaProcessor<T extends AbstractEntity<T>, U extends EntityDow
 
 	/**
 	 * Process successful downloads.
+	 * 
+	 * @return the list of successfully downloaded entities
 	 */
-	void processSuccessfulDownloads();
+	List<T> processSuccessfulDownloads();
 
 	/**
 	 * Get the entity download queue manager.
@@ -82,6 +80,13 @@ public interface MediaProcessor<T extends AbstractEntity<T>, U extends EntityDow
 	 * 
 	 * @return the sleep time between downloads
 	 */
-	long getSleepTimeBetweenDownloads();
+	Duration getSleepTimeBetweenDownloads();
 
+	/**
+	 * Get the allowed time for a download to live before it should be
+	 * considered failed.
+	 * 
+	 * @return the allowed time for a download to live
+	 */
+	Duration getAllowedTimeForDownloadToLive();
 }

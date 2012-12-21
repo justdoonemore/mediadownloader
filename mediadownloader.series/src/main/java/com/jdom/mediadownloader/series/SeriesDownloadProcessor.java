@@ -18,21 +18,27 @@ package com.jdom.mediadownloader.series;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.jdom.mediadownloader.api.MediaProcessor;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.download.NzbDownloader;
 import com.jdom.mediadownloader.series.download.queue.SeriesDownloadQueueManager;
-import com.jdom.mediadownloader.series.download.util.SeriesDownloadUtil;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
 import com.jdom.mediadownloader.series.util.SeriesLinkFinder;
+import com.jdom.util.time.Duration;
 
 public final class SeriesDownloadProcessor implements
 		MediaProcessor<Series, SeriesDownload> {
 
-	private static final long SLEEP_TIME_BETWEEN_NZB_DOWNLOADS = Long.getLong(
-			"sleep.time.between.nzb.downloads", 2000L);
+	private static final Duration SLEEP_TIME_BETWEEN_NZB_DOWNLOADS = Duration
+			.getDuration("sleep.time.between.nzb.downloads", new Duration(2,
+					TimeUnit.SECONDS));
+
+	private static final Duration SERIES_DOWNLOAD_TIME_TO_LIVE_IN_MILLIS = Duration
+			.getDuration("series.download.time.to.live", new Duration(3,
+					TimeUnit.HOURS));
 
 	private final SeriesLinkFinder seriesLinkFinder;
 
@@ -64,18 +70,8 @@ public final class SeriesDownloadProcessor implements
 	 * @see com.jdom.mediadownloader.api.MediaProcessor#processSuccessfulDownloads()
 	 */
 	@Override
-	public void processSuccessfulDownloads() {
-		nzbDownloader.processDownloadedItems();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.jdom.mediadownloader.api.MediaProcessor#purgeFailedDownloads()
-	 */
-	@Override
-	public void purgeFailedDownloads() {
-		SeriesDownloadUtil.purgeExpiredSeries();
+	public List<Series> processSuccessfulDownloads() {
+		return nzbDownloader.processDownloadedItems();
 	}
 
 	/**
@@ -124,7 +120,17 @@ public final class SeriesDownloadProcessor implements
 	 * @see com.jdom.mediadownloader.api.MediaProcessor#getSleepTimeBetweenDownloads()
 	 */
 	@Override
-	public long getSleepTimeBetweenDownloads() {
+	public Duration getSleepTimeBetweenDownloads() {
 		return SLEEP_TIME_BETWEEN_NZB_DOWNLOADS;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.jdom.mediadownloader.api.MediaProcessor#getAllowedTimeForDownloadToLive()
+	 */
+	@Override
+	public Duration getAllowedTimeForDownloadToLive() {
+		return SERIES_DOWNLOAD_TIME_TO_LIVE_IN_MILLIS;
 	}
 }

@@ -24,13 +24,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.domain.SeriesEpisodeComparator;
-import com.jdom.mediadownloader.series.download.util.SeriesDownloadUtil;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
 import com.jdom.mediadownloader.series.util.SeriesUtil;
 import com.jdom.mediadownloader.services.ConfigurationManagerService;
@@ -41,7 +41,7 @@ import com.jdom.util.compare.CompareUtil;
 import com.jdom.util.file.FileUtils;
 import com.jdom.util.file.FileWrapper;
 import com.jdom.util.file.filter.ExcludeStartsWith;
-import com.jdom.util.time.TimeConstants;
+import com.jdom.util.time.Duration;
 
 public class SabnzbdNzbDownloader implements NzbDownloader {
 
@@ -51,6 +51,14 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 	public static final String UNPACK_PREFIX = "_UNPACK";
 
 	private static final SeriesEpisodeComparator SERIES_EPISODE_COMPARATOR = new SeriesEpisodeComparator();
+
+	/**
+	 * The duration at which if the file last modified time is within, it won't
+	 * be picked up.
+	 */
+	private static final Duration TIME_AGO_LAST_MODIFIED = Duration
+			.getDuration("file.pickup.last.modified", new Duration(2,
+					TimeUnit.MINUTES));
 
 	private final SeriesDasFactory dasFactory;
 
@@ -130,22 +138,19 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 	}
 
 	@Override
-	public void processDownloadedItems() {
+	public List<Series> processDownloadedItems() {
 		final File downloadedDirectory = configurationManager
 				.getNzbDownloadedDirectory();
 		final File tvDirectory = configurationManager.getArchivedTvDirectory();
 		final File moviesDirectory = configurationManager
 				.getArchivedMoviesDirectory();
-		final int lastModifiedInMinutes = configurationManager
-				.getLastModifiedTime();
-
-		long lastModifiedInMillis = lastModifiedInMinutes
-				* TimeConstants.MILLIS_PER_MINUTE;
 
 		List<Series> seriesList = handleRetrievedNzbs(downloadedDirectory,
-				tvDirectory, moviesDirectory, lastModifiedInMillis);
+				tvDirectory, moviesDirectory, TIME_AGO_LAST_MODIFIED);
 
 		performPostDownloadActions(seriesList);
+
+		return seriesList;
 	}
 
 	/**
@@ -157,12 +162,13 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 	 *            the directory to place tv shows in
 	 * @param moviesDirectory
 	 *            the directory to place movies in
-	 * @param lastModifiedInMillis
-	 *            how long ago the last modified time should be in milliseconds
+	 * @param timeAgoLastModified
+	 *            how long ago the last modified time must be before, for the
+	 *            file to be picked up
 	 * @return A list of series to be updated
 	 */
 	protected List<Series> handleRetrievedNzbs(File downloadedDirectory,
-			File tvDirectory, File moviesDirectory, long lastModifiedInMillis) {
+			File tvDirectory, File moviesDirectory, Duration timeAgoLastModified) {
 		// Get a list of all contents of the downloaded directory,
 		// and exclude the ones being unpacked
 		Collection<File> downloads = FileUtils.getDirectoriesFromDirectory(
@@ -185,7 +191,7 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 
 				File destinationSeriesFolder = new File(tvDirectory, show);
 
-				boolean movedSeries = moveContents(lastModifiedInMillis,
+				boolean movedSeries = moveContents(timeAgoLastModified,
 						directoryWithDownload, destinationSeriesFolder);
 
 				if (movedSeries) {
@@ -207,7 +213,7 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 					}
 				}
 			} else {
-				boolean movedMovie = moveContents(lastModifiedInMillis,
+				boolean movedMovie = moveContents(timeAgoLastModified,
 						directoryWithDownload, new File(moviesDirectory,
 								downloadedEpisodeName));
 
@@ -227,7 +233,7 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 	/**
 	 * Moves the contents to the appropriate directory.
 	 * 
-	 * @param cm
+	 * @param timeAgoLastModified
 	 * 
 	 * @param sourceDir
 	 *            the source directory
@@ -235,14 +241,14 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 	 *            the target directory
 	 * @return true if the contents were moved
 	 */
-	private boolean moveContents(long lastModifiedInMillis,
+	private boolean moveContents(Duration timeAgoLastModified,
 			FileWrapper sourceDir, File destination) {
 
 		boolean movedContents = false;
 
 		// If we should move the directory contents
 		boolean contentsReadyToBeMoved = !sourceDir
-				.hasBeenModifiedSince(lastModifiedInMillis);
+				.hasBeenModifiedSince(timeAgoLastModified.toMillis().value);
 
 		if (contentsReadyToBeMoved) {
 
@@ -302,10 +308,6 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 			}
 
 			sendSeriesUpdates(seriesUpdateObjects);
-
-			// After delivering the series updates and we received a
-			// response we can remove the series from the download queue
-			removeFromDownloadQueue(seriesList);
 		}
 	}
 
@@ -318,16 +320,6 @@ public class SabnzbdNzbDownloader implements NzbDownloader {
 		}
 
 		seriesNotifier.sendEmails(seriesUpdateObjects);
-	}
-
-	private void removeFromDownloadQueue(List<Series> seriesList) {
-		for (Series series : seriesList) {
-			// Remove the series from the queue
-			if (!(SeriesDownloadUtil.removeSeries(series))) {
-				LOG.warn("Unable to remove the series [" + series
-						+ "] from the queue");
-			}
-		}
 	}
 
 	/**

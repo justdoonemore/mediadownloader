@@ -16,6 +16,9 @@
  */
 package com.jdom.mediadownloader.series.download;
 
+import java.util.List;
+
+import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
 
 public interface NzbDownloader {
@@ -27,7 +30,9 @@ public interface NzbDownloader {
 
 	/**
 	 * Processes downloaded items.
+	 * 
+	 * @return the downloaded items
 	 */
-	void processDownloadedItems();
+	List<Series> processDownloadedItems();
 
 }

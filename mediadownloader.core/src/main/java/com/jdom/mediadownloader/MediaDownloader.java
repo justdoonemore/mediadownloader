@@ -31,6 +31,7 @@ import com.jdom.mediadownloader.domain.AbstractEntity;
 import com.jdom.mediadownloader.domain.EntityDownload;
 import com.jdom.mediadownloader.download.queue.EntityDownloadQueueManager;
 import com.jdom.util.properties.PropertiesUtil;
+import com.jdom.util.time.Duration;
 
 public class MediaDownloader {
 
@@ -104,15 +105,16 @@ public class MediaDownloader {
 
 	private <T extends AbstractEntity<T>, U extends EntityDownload<U, T>> void invokeMediaProcessor(
 			MediaProcessor<T, U> processor) {
-		processor.purgeFailedDownloads();
+		EntityDownloadQueueManager<T, U> queueManager = processor
+				.getDownloadQueueManager();
+		queueManager.purgeExpiredDownloads(processor
+				.getAllowedTimeForDownloadToLive().toMillis().value);
 
 		List<T> entities = processor.getEntities();
 
 		Collection<U> downloads = processor.findDownloads(entities);
 
 		if (!downloads.isEmpty()) {
-			EntityDownloadQueueManager<T, U> queueManager = processor
-					.getDownloadQueueManager();
 
 			// Remove anything currently downloading, and any remaining
 			// downloads to the queue
@@ -139,19 +141,27 @@ public class MediaDownloader {
 				}
 			}
 
-			long sleepTimeBetweenDownloads = processor
+			Duration sleepTimeBetweenDownloads = processor
 					.getSleepTimeBetweenDownloads();
 
 			// Perform the actual downloads
 			for (U download : downloads) {
 				processor.download(download);
 
-				if (sleepTimeBetweenDownloads > 0) {
-					sleepBetweenDownloads(sleepTimeBetweenDownloads);
-				}
+				sleepBetweenDownloads(sleepTimeBetweenDownloads);
 			}
 
-			processor.processSuccessfulDownloads();
+			List<T> successfulDownloads = processor
+					.processSuccessfulDownloads();
+
+			for (T download : successfulDownloads) {
+				// Remove the download from the queue
+				if (!(queueManager.removeEntity(download))) {
+					LOG.warn(String.format(
+							"Unable to remove download %s from the queue",
+							download));
+				}
+			}
 		}
 
 		if (LOG.isInfoEnabled()) {
@@ -161,13 +171,14 @@ public class MediaDownloader {
 		}
 	}
 
-	private void sleepBetweenDownloads(long sleepTimeBetweenDownloads) {
+	private void sleepBetweenDownloads(Duration sleepTimeBetweenDownloads) {
 		try {
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("Sleeping for " + sleepTimeBetweenDownloads
+				LOG.debug("Sleeping for "
+						+ sleepTimeBetweenDownloads.toMillis().value
 						+ " ms until next download.");
 			}
-			Thread.sleep(sleepTimeBetweenDownloads);
+			sleepTimeBetweenDownloads.sleep();
 		} catch (InterruptedException e) {
 			LOG.error("Exception while sleeping", e);
 		}

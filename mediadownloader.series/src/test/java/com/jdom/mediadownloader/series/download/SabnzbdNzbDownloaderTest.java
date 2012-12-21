@@ -23,6 +23,7 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -31,6 +32,7 @@ import org.junit.Test;
 import com.jdom.junit.utils.TestUtil;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.services.ConfigurationManagerService;
+import com.jdom.util.time.Duration;
 import com.jdom.util.time.TimeUtil;
 
 public class SabnzbdNzbDownloaderTest {
@@ -228,7 +230,7 @@ public class SabnzbdNzbDownloaderTest {
 
 		List<Series> seriesList = nzbDownloader.handleRetrievedNzbs(
 				downloadedDirectory, tvDirectory, moviesDirectory,
-				LONG_AGO_IN_MILLIS);
+				new Duration(LONG_AGO_IN_MILLIS, TimeUnit.MILLISECONDS));
 
 		assertEquals(numberOfTvFoldersMoved, seriesList.size());
 

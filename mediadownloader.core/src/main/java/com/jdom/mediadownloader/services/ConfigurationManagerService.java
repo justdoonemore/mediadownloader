@@ -41,20 +41,4 @@ public interface ConfigurationManagerService {
 	File getArchivedMoviesDirectory();
 
 	String[] getSeriesDownloadTitleExclusions();
-
-	/**
-	 * Returns the last modified time of a file in minutes for it to be able to
-	 * be picked up.
-	 * 
-	 * @return the last modified time in minutes
-	 */
-	int getLastModifiedTime();
-
-	/**
-	 * Returns the time to allow a series download attempt to live in the queue,
-	 * in hours.
-	 * 
-	 * @return the time to live in the queue for a series download, in hours.
-	 */
-	int getSeriesDownloadTimeToLive();
 }

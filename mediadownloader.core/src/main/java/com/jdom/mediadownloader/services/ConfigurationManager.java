@@ -47,12 +47,6 @@ public class ConfigurationManager implements ConfigurationManagerService {
 	private static final File ARCHIVED_MOVIES_DIRECTORY = new File(
 			System.getProperty("archived.movies.directory"));
 
-	private static final int SERIES_DOWNLOAD_TIME_TO_LIVE = getIntProperty(System
-			.getProperty("series.download.time.to.live"));
-
-	private static final int FILE_PICKUP_LAST_MODIFIED_TIME = getIntProperty(System
-			.getProperty("file.pickup.last.modified"));
-
 	private volatile static String[] seriesDownloadTitleExclusions = null;
 
 	@Override
@@ -84,16 +78,6 @@ public class ConfigurationManager implements ConfigurationManagerService {
 	@Override
 	public File getArchivedTvDirectory() {
 		return ARCHIVED_TV_DIRECTORY;
-	}
-
-	@Override
-	public int getSeriesDownloadTimeToLive() {
-		return SERIES_DOWNLOAD_TIME_TO_LIVE;
-	}
-
-	@Override
-	public int getLastModifiedTime() {
-		return FILE_PICKUP_LAST_MODIFIED_TIME;
 	}
 
 	@Override

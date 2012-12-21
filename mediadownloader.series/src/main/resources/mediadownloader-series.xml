@@ -47,10 +47,4 @@ http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 		<constructor-arg ref="seriesDasFactory" />
 	</bean>
 
-	<bean id="seriesDownloadUtil"
-		class="com.jdom.mediadownloader.series.download.util.SeriesDownloadUtil">
-		<constructor-arg ref="configurationManagerService" />
-		<constructor-arg ref="seriesDownloadQueueManager" />
-	</bean>
-
 </beans>

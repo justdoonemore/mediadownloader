@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jdom</groupId>
 	<artifactId>mediadownloader</artifactId>
-	<version>0.0.9</version>
+	<version>0.0.10</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -14,7 +14,7 @@
 		<powermock.version>1.5</powermock.version>
 		<util.io.version>0.0.1</util.io.version>
 		<util.lang.version>0.0.1</util.lang.version>
-		<util.time.version>0.0.1</util.time.version>
+		<util.time.version>0.0.2</util.time.version>
 		<commons-lang3.version>3.1</commons-lang3.version>
 		<commons.io.version>2.1</commons.io.version>
 		<hsqldb.version>2.2.8</hsqldb.version>
