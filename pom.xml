@@ -4,17 +4,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jdom</groupId>
 	<artifactId>mediadownloader</artifactId>
-	<version>0.0.14</version>
+	<version>0.0.15</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<jdk.compliance.version>1.6</jdk.compliance.version>
 		<junit.version>4.10</junit.version>
 		<powermock.version>1.5</powermock.version>
-		<util.io.version>0.0.3</util.io.version>
+		<util.io.version>0.0.4</util.io.version>
 		<util.lang.version>0.0.2</util.lang.version>
-		<util.time.version>0.0.4</util.time.version>
-		<util.log.log4j.version>0.0.2</util.log.log4j.version>
+		<util.time.version>0.0.5</util.time.version>
+		<util.log.api.version>0.0.3</util.log.api.version>
 		<commons-lang3.version>3.1</commons-lang3.version>
 		<commons.io.version>2.1</commons.io.version>
 		<hsqldb.version>2.2.8</hsqldb.version>
@@ -88,8 +88,8 @@
 
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>util.log.log4j</artifactId>
-				<version>${util.log.log4j.version}</version>
+				<artifactId>util.log.api</artifactId>
+				<version>${util.log.api.version}</version>
 			</dependency>
 
 			<dependency>
