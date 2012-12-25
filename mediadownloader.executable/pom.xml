@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.jdom</groupId>
 		<artifactId>mediadownloader</artifactId>
-		<version>0.0.13</version>
+		<version>0.0.14</version>
 	</parent>
 	<artifactId>mediadownloader.executable</artifactId>
 
@@ -13,6 +13,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
+				<version>${maven.shade.plugin.version}</version>
 				<inherited>false</inherited>
 				<executions>
 					<execution>

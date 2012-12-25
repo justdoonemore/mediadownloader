@@ -4,17 +4,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jdom</groupId>
 	<artifactId>mediadownloader</artifactId>
-	<version>0.0.13</version>
+	<version>0.0.14</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<jdk.compliance.version>1.6</jdk.compliance.version>
 		<junit.version>4.10</junit.version>
 		<powermock.version>1.5</powermock.version>
-		<util.io.version>0.0.2</util.io.version>
+		<util.io.version>0.0.3</util.io.version>
 		<util.lang.version>0.0.2</util.lang.version>
-		<util.time.version>0.0.2</util.time.version>
-		<util.log.log4j.version>0.0.1</util.log.log4j.version>
+		<util.time.version>0.0.4</util.time.version>
+		<util.log.log4j.version>0.0.2</util.log.log4j.version>
 		<commons-lang3.version>3.1</commons-lang3.version>
 		<commons.io.version>2.1</commons.io.version>
 		<hsqldb.version>2.2.8</hsqldb.version>
@@ -25,6 +25,7 @@
 		<org.springframework.version>3.1.2.RELEASE</org.springframework.version>
 		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
 		<maven.jar.plugin.version>2.3.2</maven.jar.plugin.version>
+		<maven.shade.plugin.version>2.0</maven.shade.plugin.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
