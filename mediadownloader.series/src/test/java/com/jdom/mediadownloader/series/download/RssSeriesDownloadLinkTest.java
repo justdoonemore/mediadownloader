@@ -23,8 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.download.RssLink;
-import com.jdom.mediadownloader.series.download.RssSeriesDownloadLink;
+import com.jdom.mediadownloader.series.domain.SeriesBuilder;
 
 public class RssSeriesDownloadLinkTest {
 
@@ -52,7 +51,8 @@ public class RssSeriesDownloadLinkTest {
 
 	private static final String[] TITLE_EXCLUSIONS = { "720p", "BluRay" };
 
-	private final Series targetSeries = new Series("Heroes", 2, 5);
+	private final Series targetSeries = new SeriesBuilder().withName("Heroes")
+			.withSeason(2).withEpisode(5).build();
 
 	private final RssSeriesDownloadLink rssSeriesDownloadLink = new RssSeriesDownloadLink(
 			targetSeries, testLink, TITLE_EXCLUSIONS);

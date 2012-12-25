@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.nio.channels.FileLock;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
 
 /**
  * @author djohnson
@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
  */
 public class FileLockApplicationLock implements ApplicationLock {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LogFactory
 			.getLogger(FileLockApplicationLock.class);
 
 	private final File file;

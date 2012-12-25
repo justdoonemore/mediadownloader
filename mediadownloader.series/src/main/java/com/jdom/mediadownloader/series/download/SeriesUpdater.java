@@ -16,7 +16,7 @@
  */
 package com.jdom.mediadownloader.series.download;
 
-import org.apache.log4j.Logger;
+import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesEpisodeComparator;
@@ -29,7 +29,7 @@ import com.jdom.util.compare.CompareUtil;
  */
 public class SeriesUpdater implements SeriesDownloadListener {
 
-	private static final Logger LOG = Logger.getLogger(SeriesUpdater.class);
+	private static final Logger LOG =LogFactory.getLogger(SeriesUpdater.class);
 
 	private static final SeriesEpisodeComparator SERIES_EPISODE_COMPARATOR = new SeriesEpisodeComparator();
 

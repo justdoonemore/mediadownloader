@@ -19,13 +19,14 @@ package com.jdom.junit.utils;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
-import org.jboss.logging.Logger;
 
+import com.jdom.logging.api.LogFactory;
+import com.jdom.logging.api.Logger;
 import com.jdom.mediadownloader.services.UrlDownloadService;
 
 public class FileContentsDownload implements UrlDownloadService {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LogFactory
 			.getLogger(FileContentsDownload.class);
 
 	@Override

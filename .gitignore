@@ -3,5 +3,5 @@
 .settings/
 target/
 *.*~
-app.log
+app.log*
 dependency-reduced-pom.xml

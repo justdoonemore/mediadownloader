@@ -24,42 +24,48 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.domain.SeriesBuilder;
+import com.jdom.mediadownloader.series.services.SeriesDasFactory;
 import com.jdom.util.time.TimeUtil;
 import com.jdom.util.time.TimeUtilTest;
 
 /**
- * Tests the SeriesDownloadDatabaseQueue class.
+ * Tests the {@link SeriesDownloadDatabaseQueue} class.
  * 
  * @author djohnson
  */
 @Ignore
-public class SeriesDownloadQueueMemoryImplTest {
+public class SeriesDownloadDatabaseQueueTest {
 
-	private static final SeriesDownloadDatabaseQueue seriesDownloadQueueMemoryImpl = new SeriesDownloadDatabaseQueue(
-			null);
+	private static final SeriesDasFactory NULL_DAS_FACTORY = null;
 
-	private static final Series inQueue = new Series("test", 2, 4);
+	private static final SeriesDownloadDatabaseQueue queue = new SeriesDownloadDatabaseQueue(
+			NULL_DAS_FACTORY);
 
-	private static final Series notInQueue = new Series("NotInQueue", 3, 7);
+	private static final Series inQueue = new SeriesBuilder()
+			.withName("in queue").withSeason(2).withEpisode(4).build();
+
+	private static final Series notInQueue = new SeriesBuilder()
+			.withName("not in queue").withSeason(3).withEpisode(7).build();
 
 	@Before
 	public void setUp() {
-		assertTrue(seriesDownloadQueueMemoryImpl.addEntity(inQueue));
+		assertTrue(queue.addEntity(inQueue));
 	}
 
 	@Test
 	public void removedSeriesReturnsTrue() {
-		assertTrue(seriesDownloadQueueMemoryImpl.removeEntity(inQueue));
+		assertTrue(queue.removeEntity(inQueue));
 	}
 
 	@Test
 	public void addedSeriesAlreadyInQueueReturnsFalse() {
-		assertFalse(seriesDownloadQueueMemoryImpl.addEntity(inQueue));
+		assertFalse(queue.addEntity(inQueue));
 	}
 
 	@Test
 	public void removedSeriesNotInQueueReturnsFalse() {
-		assertFalse(seriesDownloadQueueMemoryImpl.removeEntity(notInQueue));
+		assertFalse(queue.removeEntity(notInQueue));
 	}
 
 	@Test
@@ -71,14 +77,14 @@ public class SeriesDownloadQueueMemoryImplTest {
 		TimeUtilTest.freezeTime(TimeUtil.currentTimeMillis() + timeToLive);
 
 		// Add a new series
-		seriesDownloadQueueMemoryImpl.addEntity(notInQueue);
+		queue.addEntity(notInQueue);
 
 		// Purge old entries
-		seriesDownloadQueueMemoryImpl.purgeExpiredDownloads(timeToLive);
+		queue.purgeExpiredDownloads(timeToLive);
 
 		// Should not have inQueue
-		assertTrue(seriesDownloadQueueMemoryImpl.addEntity(inQueue));
+		assertTrue(queue.addEntity(inQueue));
 		// Should have notInQueue
-		assertFalse(seriesDownloadQueueMemoryImpl.addEntity(notInQueue));
+		assertFalse(queue.addEntity(notInQueue));
 	}
 }

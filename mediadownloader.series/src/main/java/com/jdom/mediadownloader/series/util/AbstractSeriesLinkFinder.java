@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-import org.apache.log4j.Logger;
+import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.services.UrlDownloadService;
@@ -34,7 +34,7 @@ import com.jdom.util.regex.RegexUtil;
  */
 public abstract class AbstractSeriesLinkFinder implements SeriesLinkFinder {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LogFactory
 			.getLogger(AbstractSeriesLinkFinder.class);
 
 	protected static String LINK_REGEX = "<a href=((\"|')?(.*?)(\"|'))?.*?</a>";

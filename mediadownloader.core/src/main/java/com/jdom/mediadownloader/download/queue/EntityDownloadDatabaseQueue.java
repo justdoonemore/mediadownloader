@@ -18,7 +18,7 @@ package com.jdom.mediadownloader.download.queue;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
 
 import com.jdom.mediadownloader.domain.AbstractEntity;
 import com.jdom.mediadownloader.domain.EntityDownload;
@@ -32,7 +32,7 @@ import com.jdom.util.time.TimeUtil;
 public abstract class EntityDownloadDatabaseQueue<T extends AbstractEntity<T>, U extends EntityDownload<U, T>>
 		implements EntityDownloadQueueManager<T, U> {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LogFactory
 			.getLogger(EntityDownloadDatabaseQueue.class);
 
 	private final AbstractDASService<T> entityDas;

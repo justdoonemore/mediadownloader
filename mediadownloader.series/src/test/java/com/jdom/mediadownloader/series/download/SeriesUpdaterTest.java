@@ -17,6 +17,7 @@
 package com.jdom.mediadownloader.series.download;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -24,10 +25,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.domain.SeriesBuilder;
 import com.jdom.mediadownloader.services.SeriesDASService;
 
 /**
@@ -40,45 +42,45 @@ public class SeriesUpdaterTest {
 
 	private final SeriesUpdater seriesUpdater = new SeriesUpdater(seriesDas);
 
+	private final SeriesBuilder dbEntity = new SeriesBuilder()
+			.withName("Test").withSeason(2).withEpisode(5);
+
+	@Before
+	public void setUp() {
+		returnSeriesEntityWhenSearchedByName(dbEntity.build());
+	}
+
 	@Test
 	public void newerSeasonTakesPrecedence() {
-		Series dbEntity = new Series("Test", 2, 5);
-		returnSeriesEntityWhenSearchedByName(dbEntity);
-
 		// Newer season
-		Series download = new Series(dbEntity.getName(), 3, 2);
+		SeriesBuilder download = seriesLike(dbEntity).withSeason(3)
+				.withEpisode(2);
 
-		seriesUpdater.downloadComplete(download);
+		seriesUpdater.downloadComplete(download.build());
 
 		verify(seriesDas).updateObject(
-				argThat(isEqualTo(new Series(download.getName(), download
-						.getSeason(), download.getEpisode() + 1))));
+				argThat(is(equalTo(seriesLike(download)
+						.withIncrementedEpisode().build()))));
 	}
 
 	@Test
 	public void newerEpisodeTakesPrecedence() {
-		Series dbEntity = new Series("Test", 2, 5);
-		returnSeriesEntityWhenSearchedByName(dbEntity);
-
 		// Newer episode
-		Series download = new Series(dbEntity.getName(), dbEntity.getSeason(),
-				dbEntity.getEpisode() + 1);
+		SeriesBuilder download = seriesLike(dbEntity).withEpisode(6);
 
-		seriesUpdater.downloadComplete(download);
+		seriesUpdater.downloadComplete(download.build());
 
 		verify(seriesDas).updateObject(
-				argThat(isEqualTo(new Series(download.getName(), download
-						.getSeason(), download.getEpisode() + 1))));
+				argThat(is(equalTo(seriesLike(download)
+						.withIncrementedEpisode().build()))));
 	}
 
 	@Test
 	public void olderEpisodeDoesntUpdateDatabase() {
-		Series dbEntity = new Series("Test", 2, 5);
-		returnSeriesEntityWhenSearchedByName(dbEntity);
-
 		// Older episode
-		Series download = new Series(dbEntity.getName(), dbEntity.getSeason(),
-				dbEntity.getEpisode() - 1);
+		SeriesBuilder downloadBuilder = seriesLike(dbEntity)
+				.withEpisode(4);
+		Series download = downloadBuilder.build();
 
 		seriesUpdater.downloadComplete(download);
 
@@ -87,18 +89,14 @@ public class SeriesUpdaterTest {
 
 	@Test
 	public void equalIncrementsEpisode() {
-		Series dbEntity = new Series("Test", 2, 5);
-		returnSeriesEntityWhenSearchedByName(dbEntity);
-
 		// Equal season and episode
-		Series download = new Series(dbEntity.getName(), dbEntity.getSeason(),
-				dbEntity.getEpisode());
+		SeriesBuilder download = seriesLike(dbEntity);
 
-		seriesUpdater.downloadComplete(download);
+		seriesUpdater.downloadComplete(download.build());
 
 		verify(seriesDas).updateObject(
-				argThat(isEqualTo(new Series(download.getName(), download
-						.getSeason(), download.getEpisode() + 1))));
+				argThat(is(equalTo(seriesLike(download)
+						.withIncrementedEpisode().build()))));
 	}
 
 	private void returnSeriesEntityWhenSearchedByName(Series seriesObj) {
@@ -106,15 +104,7 @@ public class SeriesUpdaterTest {
 				seriesObj);
 	}
 
-	/**
-	 * Matcher that verifies the object is equal to the specified {@link Series}
-	 * .
-	 * 
-	 * @param series
-	 *            the series to be equal to
-	 * @return the matcher
-	 */
-	private Matcher<Series> isEqualTo(Series series) {
-		return equalTo(series);
+	private static SeriesBuilder seriesLike(SeriesBuilder builder) {
+		return new SeriesBuilder(builder);
 	}
 }

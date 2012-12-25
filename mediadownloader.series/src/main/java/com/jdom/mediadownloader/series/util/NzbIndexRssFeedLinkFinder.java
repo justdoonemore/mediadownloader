@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
@@ -34,7 +34,7 @@ import com.jdom.util.time.TimeConstants;
 
 public class NzbIndexRssFeedLinkFinder extends AbstractSeriesLinkFinder {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LogFactory
 			.getLogger(NzbIndexRssFeedLinkFinder.class);
 
 	private static final String DEFAULT_AGE = System.getProperty("default.age");

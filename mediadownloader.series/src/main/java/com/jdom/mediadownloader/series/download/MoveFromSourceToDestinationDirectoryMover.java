@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.util.SeriesUtil;
@@ -40,7 +40,7 @@ import com.jdom.util.time.Duration;
 public class MoveFromSourceToDestinationDirectoryMover implements
 		DownloadedNzbMover {
 
-	private static final Logger LOG = Logger
+	private static final Logger LOG = LogFactory
 			.getLogger(MoveFromSourceToDestinationDirectoryMover.class);
 
 	public static final String UNPACK_PREFIX = "_UNPACK";

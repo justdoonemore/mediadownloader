@@ -19,14 +19,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
+import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
 
 import com.jdom.util.regex.RegexMatch;
 import com.jdom.util.regex.RegexUtil;
 
 public class RssLink {
 
-	private static final Logger LOG = Logger.getLogger(RssLink.class);
+	private static final Logger LOG =LogFactory.getLogger(RssLink.class);
 
 	private static final String TITLE_REGEX = "<title>\\[.*?\\]-\\[FULL\\]-\\[#a.b.teevee@EFNet\\]-\\[\\s*(.*?\\.(S|s)\\d+(E|e)\\d+\\..*?)\\s*\\].*?</title>";
 
