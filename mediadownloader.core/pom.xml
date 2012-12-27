@@ -4,25 +4,16 @@
 	<parent>
 		<artifactId>mediadownloader</artifactId>
 		<groupId>com.jdom</groupId>
-		<version>0.0.15</version>
+		<version>0.0.16</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>mediadownloader.core</artifactId>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-
 		<plugins>
-			<!-- Override here to ALSO create a test jar -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>${maven.jar.plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
