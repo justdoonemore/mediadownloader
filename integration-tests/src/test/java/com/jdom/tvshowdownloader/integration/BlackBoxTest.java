@@ -139,6 +139,18 @@ public class BlackBoxTest {
 	}
 
 	@Test
+	public void movesMovieDownloadsToMoviesDirEvenWhenNoNewDownloadsFound() {
+		// Make it so there are no downloads
+		simpsonsSeries.setSeason(99);
+		raisingHopeSeries.setSeason(99);
+		SeriesDASService seriesDAS = dasFactory.getSeriesDAS();
+		seriesDAS.updateObject(simpsonsSeries);
+		seriesDAS.updateObject(raisingHopeSeries);
+
+		movesMovieDownloadsToMoviesArchiveDir();
+	}
+
+	@Test
 	public void doesNotDownloadOldEpisodes() {
 		startMediaDownloader();
 
@@ -220,6 +232,11 @@ public class BlackBoxTest {
 				emailAddresses.size());
 		assertEquals(user.getEmailAddress(), emailAddresses.iterator().next());
 
+		assertEquals(
+				"Incorrect email body",
+				"This email is to notify you that the following show is available:\n\n[Raising Hope] - Season [3] Episode [9]",
+				email.getBody());
+
 		// Implicitly tests that no emails were sent regarding Simpsons
 		// downloads
 	}
@@ -299,8 +316,8 @@ public class BlackBoxTest {
 	 * @return the file reference to the "movie" file
 	 */
 	private File placeDownloadedMovie(String movieName) {
-		File someMovie = new File(
-				SeriesConfiguration.ARCHIVED_MOVIES_DIRECTORY, movieName);
+		File someMovie = new File(SeriesConfiguration.NZB_DOWNLOADED_DIRECTORY,
+				movieName);
 		someMovie.mkdirs();
 		File someMovieFile = new File(someMovie, movieName + ".avi");
 		try {

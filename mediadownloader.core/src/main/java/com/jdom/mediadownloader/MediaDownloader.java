@@ -21,9 +21,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.jdom.logging.api.LogFactory;
+import com.jdom.logging.api.Logger;
 import com.jdom.mediadownloader.ApplicationLock.LockException;
 import com.jdom.mediadownloader.api.MediaProcessor;
 import com.jdom.mediadownloader.api.MediaProcessorRegistry;
@@ -35,7 +36,8 @@ import com.jdom.util.time.Duration;
 
 public class MediaDownloader {
 
-	private static final Logger LOG =LogFactory.getLogger(MediaDownloader.class);
+	private static final Logger LOG = LogFactory
+			.getLogger(MediaDownloader.class);
 
 	private static ClassPathXmlApplicationContext ctx;
 
@@ -151,23 +153,24 @@ public class MediaDownloader {
 				sleepBetweenDownloads(sleepTimeBetweenDownloads);
 			}
 
-			List<T> successfulDownloads = processor
-					.processSuccessfulDownloads();
-
-			for (T download : successfulDownloads) {
-				// Remove the download from the queue
-				if (!(queueManager.removeEntity(download))) {
-					LOG.warn(String.format(
-							"Unable to remove download %s from the queue",
-							download));
-				}
-			}
 		}
 
 		if (LOG.isInfoEnabled()) {
 			LOG.info(String.format(
 					"Found [%s] downloads for media processor [%s]",
 					downloads.size(), processor.getName()));
+		}
+
+		LOG.debug("Checking for successful downloads for processor.");
+		List<T> successfulDownloads = processor.processSuccessfulDownloads();
+
+		for (T download : successfulDownloads) {
+			// Remove the download from the queue
+			if (!(queueManager.removeEntity(download))) {
+				LOG.warn(String
+						.format("Unable to remove download %s from the queue",
+								download));
+			}
 		}
 	}
 

@@ -90,11 +90,10 @@ public class SeriesDownloadEmailNotifier implements SeriesDownloadListener {
 
 		email.setEmailAddresses(emailAddresses);
 
-		// Create string representation of the show, note the previous episode
-		// because the persisted object has already been updated
+		// Create string representation of the show
 		String show = "[" + series.getName() + "] - Season ["
-				+ series.getSeason() + "] Episode ["
-				+ (series.getEpisode() - 1) + "]";
+				+ series.getSeason() + "] Episode [" + series.getEpisode()
+				+ "]";
 
 		// Add subject
 		email.setSubject("Notification for " + show);

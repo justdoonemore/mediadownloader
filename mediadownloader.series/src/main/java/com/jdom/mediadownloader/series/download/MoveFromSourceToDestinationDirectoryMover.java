@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
-
+import com.jdom.logging.api.LogFactory;
+import com.jdom.logging.api.Logger;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.util.SeriesUtil;
 import com.jdom.util.file.FileUtils;
@@ -90,12 +90,21 @@ public class MoveFromSourceToDestinationDirectoryMover implements
 	public List<Series> handleRetrievedNzbs() {
 		// Get a list of all contents of the downloaded directory,
 		// and exclude the ones being unpacked
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Looking for downloads in directory ["
+					+ downloadedDirectory.getAbsolutePath() + "]");
+		}
+
 		Collection<File> downloads = FileUtils.getDirectoriesFromDirectory(
 				downloadedDirectory, false, downloadedNzbsFilter);
 		List<Series> seriesList = new ArrayList<Series>();
 
 		// Look for any series
 		for (File candidate : downloads) {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Found file [" + candidate.getAbsolutePath() + "]");
+			}
+
 			FileWrapper directoryWithDownload = new FileWrapper(candidate);
 
 			final String downloadedEpisodeName = directoryWithDownload

@@ -13,17 +13,22 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.mediadownloader.series.util;
+ */
+package com.jdom.mediadownloader.series.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.jdom.logging.api.LogFactory;
+import com.jdom.logging.api.Logger;
 import com.jdom.mediadownloader.series.domain.Series;
 
 public final class SeriesUtil {
 
 	private static final Pattern SERIES_REGEX_PATTERN = Pattern
 			.compile("(.*)?(S|s)(\\d\\d)(E|e)(\\d\\d).*?");
+
+	private static final Logger LOG = LogFactory.getLogger(SeriesUtil.class);
 
 	private static final int SHOW_GROUP = 1;
 
@@ -48,12 +53,22 @@ public final class SeriesUtil {
 		Matcher m = SERIES_REGEX_PATTERN.matcher(string);
 
 		if (m.find()) {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("String [" + string + "] is a show");
+			}
 			String show = m.group(SHOW_GROUP).replaceAll("(\\.|_)", " ").trim();
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("Found show [" + show + "]");
+			}
 
 			int season = Integer.parseInt(m.group(SEASON_GROUP));
 			int episode = Integer.parseInt(m.group(EPISODE_GROUP));
 
 			series = new Series(show, season, episode);
+		} else {
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("String [" + string + "] is not a show");
+			}
 		}
 
 		return series;

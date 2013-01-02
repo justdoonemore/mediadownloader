@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.jdom.logging.api.LogFactory;
+import com.jdom.logging.api.Logger;
 import com.jdom.mediadownloader.api.MediaProcessor;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
@@ -39,6 +41,9 @@ public final class SeriesDownloadProcessor implements
 	private static final Duration SERIES_DOWNLOAD_TIME_TO_LIVE_IN_MILLIS = Duration
 			.getDuration("series.download.time.to.live", new Duration(3,
 					TimeUnit.HOURS));
+
+	private static final Logger LOG = LogFactory
+			.getLogger(SeriesDownloadProcessor.class);
 
 	private final SeriesLinkFinder seriesLinkFinder;
 
@@ -71,6 +76,7 @@ public final class SeriesDownloadProcessor implements
 	 */
 	@Override
 	public List<Series> processSuccessfulDownloads() {
+		LOG.debug("processSuccessfulDownloads called.");
 		return nzbDownloader.processDownloadedItems();
 	}
 
