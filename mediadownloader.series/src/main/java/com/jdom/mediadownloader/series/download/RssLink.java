@@ -13,22 +13,23 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.mediadownloader.series.download;
+ */
+package com.jdom.mediadownloader.series.download;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
-import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
-
+import com.jdom.logging.api.LogFactory;
+import com.jdom.logging.api.Logger;
 import com.jdom.util.regex.RegexMatch;
 import com.jdom.util.regex.RegexUtil;
 
 public class RssLink {
 
-	private static final Logger LOG =LogFactory.getLogger(RssLink.class);
+	private static final Logger LOG = LogFactory.getLogger(RssLink.class);
 
-	private static final String TITLE_REGEX = "<title>\\[.*?\\]-\\[FULL\\]-\\[#a.b.teevee@EFNet\\]-\\[\\s*(.*?\\.(S|s)\\d+(E|e)\\d+\\..*?)\\s*\\].*?</title>";
+	private static final String TITLE_REGEX = "<title>\\[.*?\\]-\\[FULL\\]-\\[#a.b.teevee.*\\]-\\[\\s*(.*?\\.(S|s)\\d+(E|e)\\d+\\..*?)\\s*\\].*?</title>";
 
 	private static final String URL_REGEX = "url=\"(.*?)\"";
 

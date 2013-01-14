@@ -19,9 +19,12 @@ package com.jdom.mediadownloader.series.download;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import com.jdom.junit.utils.TestUtil;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesBuilder;
 
@@ -114,6 +117,18 @@ public class RssSeriesDownloadLinkTest {
 
 		return SERIES_DISPLAY_NAME.replaceAll("S02E05", "S0" + season + "E0"
 				+ episode);
+	}
+
+	@Test
+	public void matchesNzbWithoutEFNetInTitle() throws IOException {
+		String noEfnetInTitle = TestUtil.readFileToString(
+				RssSeriesDownloadLinkTest.class, "/no_efnet_in_title.xml");
+
+		RssSeriesDownloadLink link = new RssSeriesDownloadLink(
+				new SeriesBuilder().withName("American Dad").withSeason(8)
+						.withEpisode(7).build(), noEfnetInTitle, new String[0]);
+
+		assertTrue(link.matchesSeriesDownloadCriteria());
 	}
 
 }

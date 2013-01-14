@@ -13,12 +13,15 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.junit.utils;
+ */
+package com.jdom.junit.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 public final class TestUtil {
 
@@ -49,4 +52,20 @@ public final class TestUtil {
 		return dir;
 	}
 
+	public static byte[] readFile(Class<?> callingClass, String resourcePath)
+			throws IOException {
+		InputStream is = null;
+		try {
+			byte[] bytes = IOUtils.toByteArray(callingClass
+					.getResourceAsStream(resourcePath));
+			return bytes;
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
+	}
+
+	public static String readFileToString(Class<?> callingClass,
+			String resourcePath) throws IOException {
+		return new String(readFile(callingClass, resourcePath));
+	}
 }

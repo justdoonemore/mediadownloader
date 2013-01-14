@@ -8,7 +8,7 @@
 		<version>0.0.1</version>
 	</parent>
 	<artifactId>mediadownloader</artifactId>
-	<version>0.0.17</version>
+	<version>0.0.18</version>
 	<packaging>pom</packaging>
 
 	<modules>
