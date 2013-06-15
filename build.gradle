@@ -1,0 +1,134 @@
+buildscript {
+    repositories {
+        maven {
+            name 'Gradle Shadow'
+            url 'http://dl.bintray.com/content/johnrengelman/gradle-plugins'
+        }
+    }
+    dependencies {
+        classpath 'org.gradle.plugins:shadow:0.7.4'
+    }
+}
+
+apply plugin: 'shadow'
+    
+subprojects {
+
+   configurations() {
+      shared
+      sharedTest
+
+      compile {
+         extendsFrom shared
+      }
+
+      testCompile {
+         extendsFrom sharedTest
+      }
+   }
+	
+   apply plugin: 'java'
+   apply plugin: 'maven'
+   apply plugin: 'eclipse'
+   apply plugin: 'shadow'
+
+   version "0.0.19"
+   group="com.jdom"
+
+   repositories {
+       maven {
+           credentials {
+              username nexusUsername
+              password nexusPassword
+           }
+           url nexusUrl
+       }
+   }
+
+   uploadArchives {
+       repositories {
+          mavenDeployer {
+             repository(url: releasesUrl) {
+	        authentication(userName: nexusUsername, password: nexusPassword)
+             }
+          }
+       }
+   }
+
+   dependencies {
+      shared "com.jdom:util.log.api:0.0.4"
+      shared "com.jdom:util.io:0.0.5"
+      
+      sharedTest "junit:junit:4.11"
+      sharedTest "org.powermock:powermock-module-junit4:1.5"
+      sharedTest "org.powermock:powermock-api-mockito:1.5"
+      sharedTest group: 'com.jdom', name: 'util.time', version: '0.0.7', classifier: 'tests'
+   }
+}
+
+project(':mediadownloader.core') {
+    dependencies {
+        compile "com.jdom:util.time:0.0.7"
+        compile "org.apache.commons:commons-lang3:3.1"
+        compile "org.hibernate:hibernate-entitymanager:4.1.9.Final"
+        compile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
+        compile "org.springframework:spring-core:3.1.2.RELEASE"
+        compile "org.springframework:spring-beans:3.1.2.RELEASE"
+        compile "org.springframework:spring-context:3.1.2.RELEASE"
+        compile "org.springframework:spring-orm:3.1.2.RELEASE"
+        compile "org.springframework:spring-tx:3.1.2.RELEASE"
+    }
+}
+
+project(':mediadownloader.series') {
+    dependencies {
+        compile project(':mediadownloader.core')
+        
+        testCompile project(':mediadownloader.core').sourceSets.test.output
+    }
+}
+
+project(':integration-tests') {
+    dependencies {
+        compile project(':mediadownloader.core')
+        compile project(':mediadownloader.series')
+        compile "commons-io:commons-io:2.1"
+        
+        testCompile project(':mediadownloader.core').sourceSets.test.output
+        testCompile "com.jdom:util.log.log4j:0.0.4"
+        testCompile "org.hsqldb:hsqldb:2.2.8"
+    }
+}
+
+project(':mediadownloader.executable') {
+
+	shadow {
+       artifactAttached = false
+
+	   transformer(org.gradle.api.plugins.shadow.transformers.AppendingTransformer) {
+	      resource = 'META-INF/spring.handlers'
+	   }
+	   transformer(org.gradle.api.plugins.shadow.transformers.AppendingTransformer) {
+	      resource = 'META-INF/spring.schemas'
+	   }
+	}
+    
+    dependencies {
+        runtime project(':mediadownloader.core')
+        runtime project(':mediadownloader.series')
+        runtime "com.jdom:util.log.log4j:0.0.4"
+        runtime "mysql:mysql-connector-java:5.1.22"
+        
+        jar {
+            dependsOn configurations.runtime
+            from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
+            manifest { attributes 'Main-Class': 'com.jdom.mediadownloader.MediaDownloader' }
+        }
+    }
+    
+    // make sure that after creating the jar, the shadow process is run.
+	tasks.getByPath('jar').doLast {
+    	tasks.getByPath('shadow').execute()
+    	
+	}
+ }

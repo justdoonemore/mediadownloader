@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesBuilder;
@@ -53,22 +52,22 @@ public class SeriesDownloadDatabaseQueueTest {
 		assertTrue(queue.addEntity(inQueue));
 	}
 
-	@Test
+	@Ignore
 	public void removedSeriesReturnsTrue() {
 		assertTrue(queue.removeEntity(inQueue));
 	}
 
-	@Test
+	@Ignore
 	public void addedSeriesAlreadyInQueueReturnsFalse() {
 		assertFalse(queue.addEntity(inQueue));
 	}
 
-	@Test
+	@Ignore
 	public void removedSeriesNotInQueueReturnsFalse() {
 		assertFalse(queue.removeEntity(notInQueue));
 	}
 
-	@Test
+	@Ignore
 	public void purgeRemovesOldSeriesQueueEntries() throws InterruptedException {
 		TimeUtilTest.freezeTime();
 
