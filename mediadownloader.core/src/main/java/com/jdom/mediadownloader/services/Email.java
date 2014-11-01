@@ -16,12 +16,10 @@
  */
 package com.jdom.mediadownloader.services;
 
-import com.jdom.util.email.Emailer;
-
 public class Email implements EmailService {
 
 	@Override
-	public void email(com.jdom.util.email.Email email) {
+	public void email(Emailer.Email email) {
 		Emailer.email(email);
 	}
 

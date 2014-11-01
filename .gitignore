@@ -6,3 +6,5 @@ bin/
 .classpath
 app.log*
 *~
+*.iml
+.idea/

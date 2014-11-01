@@ -16,10 +16,11 @@
  */
 package com.jdom.mediadownloader.series.download;
 
-import java.io.File;
-
+import com.google.common.io.Files;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
-import com.jdom.util.file.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author djohnson
@@ -46,7 +47,12 @@ public class FileQueueNzbAdder implements NzbAdder {
 		File finalFile = new File(destinationDirectory, download.getNzbTitle());
 
 		// Write the temp file to disk
-		return FileUtils.writeFileToDisk(finalFile, bytes, true);
+		try {
+			Files.write(bytes, finalFile);
+			return true;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

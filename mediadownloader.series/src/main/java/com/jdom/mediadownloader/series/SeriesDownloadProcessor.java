@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.jdom.logging.api.LogFactory;
-import com.jdom.logging.api.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import com.jdom.mediadownloader.api.MediaProcessor;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
@@ -42,7 +42,7 @@ public final class SeriesDownloadProcessor implements
 			.getDuration("series.download.time.to.live", new Duration(3,
 					TimeUnit.HOURS));
 
-	private static final Logger LOG = LogFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(SeriesDownloadProcessor.class);
 
 	private final SeriesLinkFinder seriesLinkFinder;

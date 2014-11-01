@@ -16,16 +16,16 @@
  */
 package com.jdom.mediadownloader.series.util;
 
+import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.download.RegexMatch;
+import com.jdom.mediadownloader.series.download.RegexUtil;
+import com.jdom.mediadownloader.services.UrlDownloadService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-
-import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
-
-import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.services.UrlDownloadService;
-import com.jdom.util.regex.RegexMatch;
-import com.jdom.util.regex.RegexUtil;
 
 /**
  * Provides common functionality between all link finders.
@@ -34,7 +34,7 @@ import com.jdom.util.regex.RegexUtil;
  */
 public abstract class AbstractSeriesLinkFinder implements SeriesLinkFinder {
 
-	private static final Logger LOG = LogFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(AbstractSeriesLinkFinder.class);
 
 	protected static String LINK_REGEX = "<a href=((\"|')?(.*?)(\"|'))?.*?</a>";

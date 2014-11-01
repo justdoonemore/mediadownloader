@@ -13,9 +13,8 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.mediadownloader.services;
-
-import com.jdom.util.html.HtmlUtil;
+ */
+package com.jdom.mediadownloader.services;
 
 public class UrlDownload implements UrlDownloadService {
 

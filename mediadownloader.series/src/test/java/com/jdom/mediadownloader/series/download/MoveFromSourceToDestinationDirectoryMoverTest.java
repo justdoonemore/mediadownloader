@@ -16,22 +16,21 @@
  */
 package com.jdom.mediadownloader.series.download;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.google.common.io.Files;
+import com.jdom.junit.utils.TestUtil;
+import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.util.time.Duration;
+import com.jdom.util.time.TimeUtil;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.jdom.junit.utils.TestUtil;
-import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.util.time.Duration;
-import com.jdom.util.time.TimeUtil;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class MoveFromSourceToDestinationDirectoryMoverTest {
 
@@ -197,7 +196,7 @@ public class MoveFromSourceToDestinationDirectoryMoverTest {
 
 		File textFile = new File(subFolder, subfolderName + ".avi");
 
-		FileUtils.write(textFile, subfolderName);
+		Files.write(subfolderName.getBytes(), textFile);
 
 		textFile.setLastModified(TimeUtil.currentTimeMillis());
 

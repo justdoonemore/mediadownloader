@@ -26,13 +26,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 public abstract class AbstractDAS<T extends Comparable<T>> implements
 		AbstractDASService<T> {
 
-	private static final Logger LOG =LogFactory.getLogger(AbstractDAS.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractDAS.class);
 
 	@PersistenceContext
 	protected EntityManager em;

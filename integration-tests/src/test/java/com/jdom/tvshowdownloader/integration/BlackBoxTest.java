@@ -16,25 +16,7 @@
  */
 package com.jdom.tvshowdownloader.integration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.context.ApplicationContextAware;
-
+import com.google.common.io.Closeables;
 import com.jdom.mediadownloader.MediaDownloader;
 import com.jdom.mediadownloader.domain.User;
 import com.jdom.mediadownloader.series.SeriesConfiguration;
@@ -44,11 +26,28 @@ import com.jdom.mediadownloader.series.download.queue.SeriesDownloadQueueManager
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
 import com.jdom.mediadownloader.services.SeriesDASService;
 import com.jdom.mediadownloader.services.UserDASService;
-import com.jdom.util.email.Email;
-import com.jdom.util.properties.PropertiesUtil;
 import com.jdom.util.time.Duration;
 import com.jdom.util.time.TimeUtil;
 import com.jdom.util.time.TimeUtilTest;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.springframework.context.ApplicationContextAware;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import static com.jdom.mediadownloader.services.Emailer.Email;
+import static org.junit.Assert.*;
 
 public class BlackBoxTest {
 
@@ -72,8 +71,19 @@ public class BlackBoxTest {
 	public static void staticSetUp() {
 		createIntegrationTestPropertiesFile();
 
-		System.getProperties().putAll(
-				PropertiesUtil.readPropertiesFile(propertiesFile));
+		Properties properties = new Properties();
+		FileReader fileReader = null;
+
+		try {
+			fileReader = new FileReader(propertiesFile);
+			properties.load(fileReader);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			Closeables.closeQuietly(fileReader);
+		}
+
+		System.getProperties().putAll(properties);
 	}
 
 	@Before

@@ -1,1 +1,1 @@
-include 'mediadownloader.core', 'mediadownloader.series', 'integration-tests', 'mediadownloader.executable'
+include 'mediadownloader.core', 'mediadownloader.series', 'integration-tests', 'mediadownloader.executable', 'util.time'

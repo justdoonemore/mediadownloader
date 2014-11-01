@@ -13,10 +13,11 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.tvshowdownloader.integration;
+ */
+package com.jdom.tvshowdownloader.integration;
 
+import com.jdom.mediadownloader.series.download.FileUtils;
 import com.jdom.mediadownloader.services.UrlDownloadService;
-import com.jdom.util.file.FileUtils;
 
 public class MockUrlDownloadService implements UrlDownloadService {
 

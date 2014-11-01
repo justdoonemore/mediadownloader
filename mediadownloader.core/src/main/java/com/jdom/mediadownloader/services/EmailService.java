@@ -16,8 +16,6 @@
  */
 package com.jdom.mediadownloader.services;
 
-import com.jdom.util.email.Email;
-
 public interface EmailService {
 
 	/**
@@ -26,6 +24,6 @@ public interface EmailService {
 	 * @param email
 	 *            the email to send
 	 */
-	void email(Email email);
+	void email(Emailer.Email email);
 
 }

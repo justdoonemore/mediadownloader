@@ -16,12 +16,11 @@
  */
 package com.jdom.mediadownloader.series.download;
 
-import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
-
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesEpisodeComparator;
 import com.jdom.mediadownloader.services.SeriesDASService;
-import com.jdom.util.compare.CompareUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author djohnson
@@ -29,7 +28,7 @@ import com.jdom.util.compare.CompareUtil;
  */
 public class SeriesUpdater implements SeriesDownloadListener {
 
-	private static final Logger LOG =LogFactory.getLogger(SeriesUpdater.class);
+	private static final Logger LOG =LoggerFactory.getLogger(SeriesUpdater.class);
 
 	private static final SeriesEpisodeComparator SERIES_EPISODE_COMPARATOR = new SeriesEpisodeComparator();
 
@@ -83,7 +82,7 @@ public class SeriesUpdater implements SeriesDownloadListener {
 	 *            the downloaded series instance
 	 */
 	private Series prepareSeriesUpdate(Series seriesObj, Series series) {
-		if (SERIES_EPISODE_COMPARATOR.compare(series, seriesObj) > CompareUtil.LESS_THAN) {
+		if (SERIES_EPISODE_COMPARATOR.compare(series, seriesObj) > -1) {
 			seriesObj.setSeason(series.getSeason());
 			seriesObj.setEpisode(series.getEpisode() + 1);
 			return seriesObj;

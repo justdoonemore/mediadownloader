@@ -16,12 +16,11 @@
  */
 package com.jdom.junit.utils;
 
+import com.google.common.io.Resources;
+import org.springframework.util.FileSystemUtils;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 public final class TestUtil {
 
@@ -40,11 +39,7 @@ public final class TestUtil {
 				testClass.getSimpleName());
 
 		// Delete any preexisting version
-		try {
-			FileUtils.deleteDirectory(dir);
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
+		FileSystemUtils.deleteRecursively(dir);
 
 		// Make the directory
 		dir.mkdirs();
@@ -54,14 +49,8 @@ public final class TestUtil {
 
 	public static byte[] readFile(Class<?> callingClass, String resourcePath)
 			throws IOException {
-		InputStream is = null;
-		try {
-			byte[] bytes = IOUtils.toByteArray(callingClass
-					.getResourceAsStream(resourcePath));
-			return bytes;
-		} finally {
-			IOUtils.closeQuietly(is);
-		}
+		return Resources.toByteArray(callingClass
+					.getResource(resourcePath));
 	}
 
 	public static String readFileToString(Class<?> callingClass,

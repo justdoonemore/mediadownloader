@@ -17,26 +17,29 @@
 package com.jdom.mediadownloader;
 
 import java.io.File;
+import java.io.FileReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
+import com.google.common.io.Closeables;
+import org.apache.log4j.lf5.util.StreamUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.jdom.logging.api.LogFactory;
-import com.jdom.logging.api.Logger;
 import com.jdom.mediadownloader.ApplicationLock.LockException;
 import com.jdom.mediadownloader.api.MediaProcessor;
 import com.jdom.mediadownloader.api.MediaProcessorRegistry;
 import com.jdom.mediadownloader.domain.AbstractEntity;
 import com.jdom.mediadownloader.domain.EntityDownload;
 import com.jdom.mediadownloader.download.queue.EntityDownloadQueueManager;
-import com.jdom.util.properties.PropertiesUtil;
 import com.jdom.util.time.Duration;
 
 public class MediaDownloader {
 
-	private static final Logger LOG = LogFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(MediaDownloader.class);
 
 	private static ClassPathXmlApplicationContext ctx;
@@ -49,7 +52,19 @@ public class MediaDownloader {
 
 		File file = new File(args[0]);
 
-		System.getProperties().putAll(PropertiesUtil.readPropertiesFile(file));
+		Properties properties = new Properties();
+		FileReader fileReader = null;
+
+		try {
+			fileReader = new FileReader(file);
+		    properties.load(fileReader);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			Closeables.closeQuietly(fileReader);
+		}
+
+		System.getProperties().putAll(properties);
 
 		initializeContext();
 

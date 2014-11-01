@@ -19,8 +19,8 @@ package com.jdom.mediadownloader.series.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.jdom.logging.api.LogFactory;
-import com.jdom.logging.api.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import com.jdom.mediadownloader.series.domain.Series;
 
 public final class SeriesUtil {
@@ -28,7 +28,7 @@ public final class SeriesUtil {
 	private static final Pattern SERIES_REGEX_PATTERN = Pattern
 			.compile("(.*)?(S|s)(\\d\\d)(E|e)(\\d\\d).*?");
 
-	private static final Logger LOG = LogFactory.getLogger(SeriesUtil.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SeriesUtil.class);
 
 	private static final int SHOW_GROUP = 1;
 

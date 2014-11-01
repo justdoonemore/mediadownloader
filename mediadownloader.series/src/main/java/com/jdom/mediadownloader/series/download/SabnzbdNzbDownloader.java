@@ -20,8 +20,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.jdom.logging.api.LogFactory;
-import com.jdom.logging.api.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
 import com.jdom.mediadownloader.series.services.SeriesDasFactory;
@@ -29,7 +29,7 @@ import com.jdom.mediadownloader.services.UrlDownloadService;
 
 public class SabnzbdNzbDownloader implements NzbDownloader {
 
-	private static final Logger LOG = LogFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(SabnzbdNzbDownloader.class);
 
 	protected final UrlDownloadService urlDownloadService;

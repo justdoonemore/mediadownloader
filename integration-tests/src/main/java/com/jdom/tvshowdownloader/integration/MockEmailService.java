@@ -16,28 +16,28 @@
  */
 package com.jdom.tvshowdownloader.integration;
 
+import com.jdom.mediadownloader.services.EmailService;
+import com.jdom.mediadownloader.services.Emailer;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.jdom.mediadownloader.services.EmailService;
-import com.jdom.util.email.Email;
 
 public class MockEmailService implements EmailService {
 
 	public static MockEmailService instance;
 
-	private final List<Email> sentEmails = new ArrayList<Email>();
+	private final List<Emailer.Email> sentEmails = new ArrayList<Emailer.Email>();
 
 	public MockEmailService() {
 		instance = this;
 	}
 
 	@Override
-	public void email(Email email) {
+	public void email(Emailer.Email email) {
 		sentEmails.add(email);
 	}
 
-	public List<Email> getSentEmails() {
+	public List<Emailer.Email> getSentEmails() {
 		return sentEmails;
 	}
 

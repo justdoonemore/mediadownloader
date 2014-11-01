@@ -21,8 +21,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileLock;
 
-import org.apache.commons.io.IOUtils;
-import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
+import com.google.common.io.Closeables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;;
 
 /**
  * @author djohnson
@@ -30,7 +31,7 @@ import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
  */
 public class FileLockApplicationLock implements ApplicationLock {
 
-	private static final Logger LOG = LogFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(FileLockApplicationLock.class);
 
 	private final File file;
@@ -74,7 +75,11 @@ public class FileLockApplicationLock implements ApplicationLock {
 			}
 		}
 		if (fos != null) {
-			IOUtils.closeQuietly(fos);
+			try {
+				Closeables.close(fos, true);
+			} catch (IOException e) {
+				LOG.error("Unable to close output stream!", e);
+			}
 		}
 	}
 

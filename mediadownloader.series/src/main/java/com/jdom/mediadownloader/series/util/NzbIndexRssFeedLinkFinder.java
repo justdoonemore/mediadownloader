@@ -16,25 +16,24 @@
  */
 package com.jdom.mediadownloader.series.util;
 
+import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.domain.SeriesDownload;
+import com.jdom.mediadownloader.series.download.RegexMatch;
+import com.jdom.mediadownloader.series.download.RegexUtil;
+import com.jdom.mediadownloader.series.download.SeriesDownloadFinder;
+import com.jdom.mediadownloader.services.UrlDownloadService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
-
-import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.domain.SeriesDownload;
-import com.jdom.mediadownloader.series.download.SeriesDownloadFinder;
-import com.jdom.mediadownloader.services.UrlDownloadService;
-import com.jdom.util.regex.RegexMatch;
-import com.jdom.util.regex.RegexUtil;
-import com.jdom.util.time.TimeConstants;
-
 public class NzbIndexRssFeedLinkFinder extends AbstractSeriesLinkFinder {
 
-	private static final Logger LOG = LogFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(NzbIndexRssFeedLinkFinder.class);
 
 	private static final String DEFAULT_AGE = System.getProperty("default.age");
@@ -52,7 +51,7 @@ public class NzbIndexRssFeedLinkFinder extends AbstractSeriesLinkFinder {
 
 	protected static final String LINK_REGEX = "<item>.*?</item>";
 
-	protected static final long TWO_MINUTES_IN_MILLIS = 2 * TimeConstants.MILLIS_PER_MINUTE;
+	protected static final long TWO_MINUTES_IN_MILLIS = 2 * 60000;
 
 	private final String seriesSearchUrl;
 
@@ -79,8 +78,6 @@ public class NzbIndexRssFeedLinkFinder extends AbstractSeriesLinkFinder {
 	 * 
 	 * @param listOfSeries
 	 *            the list of series to look for links of
-	 * @param seriesLinkFinder
-	 *            the series link finder strategy
 	 * @param titleExclusions
 	 * @return the collection of series downloads
 	 */

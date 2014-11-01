@@ -16,25 +16,24 @@
  */
 package com.jdom.mediadownloader.services;
 
+import com.jdom.mediadownloader.domain.User;
+import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.download.SeriesDownloadListener;
+import com.jdom.mediadownloader.services.series.SeriesService;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import com.jdom.mediadownloader.domain.User;
-import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.download.SeriesDownloadListener;
-import com.jdom.mediadownloader.services.series.SeriesService;
-import com.jdom.util.email.Email;
-
 public class SeriesDownloadEmailNotifier implements SeriesDownloadListener {
 
 	private final EmailService emailService;
 
-	private final Email templateEmail;
+	private final Emailer.Email templateEmail;
 
 	public SeriesDownloadEmailNotifier(EmailService emailService,
-			Email templateEmail) {
+									   Emailer.Email templateEmail) {
 		this.emailService = emailService;
 		this.templateEmail = templateEmail;
 	}
@@ -51,7 +50,7 @@ public class SeriesDownloadEmailNotifier implements SeriesDownloadListener {
 
 	private void sendEmails(List<Series> seriesList) {
 
-		Collection<Email> emailsToSend = new ArrayList<Email>();
+		Collection<Emailer.Email> emailsToSend = new ArrayList<Emailer.Email>();
 
 		// Construct email notifications per series
 		for (Series series : seriesList) {
@@ -63,7 +62,7 @@ public class SeriesDownloadEmailNotifier implements SeriesDownloadListener {
 			}
 		}
 
-		for (Email email : emailsToSend) {
+		for (Emailer.Email email : emailsToSend) {
 			emailService.email(email);
 		}
 	}
@@ -79,8 +78,8 @@ public class SeriesDownloadEmailNotifier implements SeriesDownloadListener {
 	 *            the template email
 	 * @return the complete email object
 	 */
-	private Email createEmail(Series series, Collection<User> usersToNotify,
-			Email email) {
+	private Emailer.Email createEmail(Series series, Collection<User> usersToNotify,
+									  Emailer.Email email) {
 		Collection<String> emailAddresses = new ArrayList<String>();
 
 		// Add all user notifiees address

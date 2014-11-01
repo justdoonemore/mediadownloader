@@ -16,18 +16,16 @@
  */
 package com.jdom.mediadownloader.series.download;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 
-import com.jdom.logging.api.LogFactory;
-import com.jdom.logging.api.Logger;
-import com.jdom.util.regex.RegexMatch;
-import com.jdom.util.regex.RegexUtil;
-
 public class RssLink {
 
-	private static final Logger LOG = LogFactory.getLogger(RssLink.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RssLink.class);
 
 	private static final String TITLE_REGEX = "<title>\\[.*?\\]-\\[FULL\\]-\\[#a.b.teevee.*\\]-\\[\\s*(.*?\\.(S|s)\\d+(E|e)\\d+\\..*?)\\s*\\].*?</title>";
 

@@ -16,22 +16,16 @@
  */
 package com.jdom.mediadownloader.series.download;
 
+import com.jdom.mediadownloader.series.domain.Series;
+import com.jdom.mediadownloader.series.download.filter.ExcludeStartsWith;
+import com.jdom.mediadownloader.series.util.SeriesUtil;
+import com.jdom.util.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-
-import com.jdom.logging.api.LogFactory;
-import com.jdom.logging.api.Logger;
-import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.mediadownloader.series.util.SeriesUtil;
-import com.jdom.util.file.FileUtils;
-import com.jdom.util.file.FileWrapper;
-import com.jdom.util.file.filter.ExcludeStartsWith;
-import com.jdom.util.time.Duration;
+import java.util.*;
 
 /**
  * @author djohnson
@@ -40,7 +34,7 @@ import com.jdom.util.time.Duration;
 public class MoveFromSourceToDestinationDirectoryMover implements
 		DownloadedNzbMover {
 
-	private static final Logger LOG = LogFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(MoveFromSourceToDestinationDirectoryMover.class);
 
 	public static final String UNPACK_PREFIX = "_UNPACK";

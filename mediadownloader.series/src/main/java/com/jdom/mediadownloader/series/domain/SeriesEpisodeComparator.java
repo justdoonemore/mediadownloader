@@ -13,17 +13,16 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.mediadownloader.series.domain;
+ */
+package com.jdom.mediadownloader.series.domain;
 
 import java.util.Comparator;
-
-import com.jdom.util.compare.CompareUtil;
 
 public class SeriesEpisodeComparator implements Comparator<Series> {
 
 	@Override
 	public int compare(Series seriesOne, Series seriesTwo) {
-		int order = CompareUtil.EQUAL;
+		int order = 0;
 
 		int firstSeason = seriesOne.getSeason();
 		int firstEpisode = seriesOne.getEpisode();
@@ -31,14 +30,14 @@ public class SeriesEpisodeComparator implements Comparator<Series> {
 		int secondEpisode = seriesTwo.getEpisode();
 
 		if (firstSeason > secondSeason) {
-			order = CompareUtil.GREATER_THAN;
+			order = 1;
 		} else if (firstSeason < secondSeason) {
-			order = CompareUtil.LESS_THAN;
+			order = -1;
 		} else {
 			if (firstEpisode > secondEpisode) {
-				order = CompareUtil.GREATER_THAN;
+				order = 1;
 			} else if (firstEpisode < secondEpisode) {
-				order = CompareUtil.LESS_THAN;
+				order = -1;
 			}
 		}
 

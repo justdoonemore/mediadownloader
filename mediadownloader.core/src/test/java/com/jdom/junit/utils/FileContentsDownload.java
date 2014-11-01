@@ -16,24 +16,24 @@
  */
 package com.jdom.junit.utils;
 
-import java.io.IOException;
-
-import org.apache.commons.io.IOUtils;
-
-import com.jdom.logging.api.LogFactory;
-import com.jdom.logging.api.Logger;
+import com.google.common.io.Resources;
 import com.jdom.mediadownloader.services.UrlDownloadService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
 
 public class FileContentsDownload implements UrlDownloadService {
 
-	private static final Logger LOG = LogFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(FileContentsDownload.class);
 
 	@Override
 	public String downloadUrlContents(String path) {
 		try {
-			return IOUtils.toString(FileContentsDownload.class
-					.getResourceAsStream(path));
+			return Resources.toString(FileContentsDownload.class
+					.getResource(path), Charset.defaultCharset());
 		} catch (IOException e) {
 			LOG.error("Error reading path [" + path + "]", e);
 			return null;

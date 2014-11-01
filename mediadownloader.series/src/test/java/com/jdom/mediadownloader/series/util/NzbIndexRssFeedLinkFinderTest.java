@@ -16,17 +16,15 @@
  */
 package com.jdom.mediadownloader.series.util;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collection;
-
+import com.jdom.junit.utils.FileContentsDownload;
+import com.jdom.mediadownloader.series.domain.Series;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.jdom.junit.utils.FileContentsDownload;
-import com.jdom.mediadownloader.series.domain.Series;
-import com.jdom.util.html.exception.MalformedURLException;
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
 
 public class NzbIndexRssFeedLinkFinderTest extends
 		AbstractSeriesLinkFinderTest<MockNzbIndexRssFeedLinkFinder> {
@@ -46,7 +44,7 @@ public class NzbIndexRssFeedLinkFinderTest extends
 	}
 
 	@Test
-	public void testRetrievingLinks() throws MalformedURLException {
+	public void testRetrievingLinks() throws Exception {
 		Series simpsons = new Series("The Simpsons", 1, 1);
 
 		Collection<String> links = linkFinder
@@ -57,7 +55,7 @@ public class NzbIndexRssFeedLinkFinderTest extends
 
 	@Test
 	public void testGetSeriesSearchPageUsesInitialAgeForNewSeries()
-			throws MalformedURLException {
+			throws Exception {
 		Series simpsons = new Series("The Simpsons", 1, 1);
 
 		String seriesSearchUrl = new NzbIndexRssFeedLinkFinder(
@@ -69,7 +67,7 @@ public class NzbIndexRssFeedLinkFinderTest extends
 
 	@Test
 	public void testGetSeriesSearchPageUsesDefaultAgeForNotNewSeries()
-			throws MalformedURLException {
+			throws Exception {
 		Series simpsons = new Series("The Simpsons", 1, 2);
 
 		String seriesSearchUrl = new NzbIndexRssFeedLinkFinder(

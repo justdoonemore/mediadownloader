@@ -19,7 +19,8 @@ package com.jdom.mediadownloader.series.download;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.jdom.logging.api.LogFactory;import com.jdom.logging.api.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.domain.SeriesDownload;
@@ -27,7 +28,7 @@ import com.jdom.mediadownloader.series.util.SeriesLinkFinder;
 
 public class SeriesDownloadFinder {
 
-	private static final Logger LOG = LogFactory
+	private static final Logger LOG = LoggerFactory
 			.getLogger(SeriesDownloadFinder.class);
 
 	private final Series series;

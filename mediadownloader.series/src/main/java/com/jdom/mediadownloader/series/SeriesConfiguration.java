@@ -16,12 +16,12 @@
  */
 package com.jdom.mediadownloader.series;
 
+import com.jdom.mediadownloader.services.Emailer;
+import com.jdom.util.time.Duration;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-
-import com.jdom.util.email.Email;
-import com.jdom.util.time.Duration;
 
 /**
  * Holds the String versions of configured properties.
@@ -76,7 +76,7 @@ public final class SeriesConfiguration {
 			.getProperty("email.username");
 	private static final String EMAIL_PASSWORD = System
 			.getProperty("email.password");
-	public static final Email TEMPLATE_EMAIL = new Email(EMAIL_SERVER,
+	public static final Emailer.Email TEMPLATE_EMAIL = new Emailer.Email(EMAIL_SERVER,
 			EMAIL_USERNAME, EMAIL_PASSWORD, null, null, null);
 
 	public static final String[] SERIES_DOWNLOAD_TITLE_EXCLUSIONS;
