@@ -1,18 +1,23 @@
 buildscript {
-  repositories { jcenter() }
-  dependencies {
-    classpath 'com.github.jengelman.gradle.plugins:shadow:1.1.1'
-  }
+   repositories { jcenter() }
+   dependencies {
+      classpath 'com.github.jengelman.gradle.plugins:shadow:1.1.1'
+   }
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 
 allprojects {
-    repositories {
-        mavenCentral()
-    }
+   repositories {
+      mavenCentral()
+   }
 }
-    
+
+ext {
+   slf4jVersion = '1.7.7'
+   springVersion = '3.1.2.RELEASE'
+}
+
 subprojects {
 
    configurations() {
@@ -27,21 +32,20 @@ subprojects {
          extendsFrom sharedTest
       }
    }
-	
+
    apply plugin: 'java'
    apply plugin: 'maven'
    apply plugin: 'eclipse'
    apply plugin: 'com.github.johnrengelman.shadow'
 
-   version "0.1.0"
-   group="com.jdom"
+   version '0.1.1'
+   group = 'com.jdom'
 
    dependencies {
-      def slf4jVersion = '1.7.7'
       shared "org.slf4j:slf4j-api:$slf4jVersion"
       shared "org.slf4j:slf4j-log4j12:$slf4jVersion"
       shared 'com.google.guava:guava:18.0'
-      
+
       sharedTest "junit:junit:4.11"
       sharedTest "org.powermock:powermock-module-junit4:1.5"
       sharedTest "org.powermock:powermock-api-mockito:1.5"
@@ -49,88 +53,89 @@ subprojects {
 }
 
 project(':mediadownloader.core') {
-    dependencies {
-        compile project(':util.time')
-        compile 'javax.mail:mail:1.4.7'
-        compile "org.apache.commons:commons-lang3:3.1"
-        compile "org.hibernate:hibernate-entitymanager:4.1.9.Final"
-        compile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
-        compile "org.springframework:spring-core:3.1.2.RELEASE"
-        compile "org.springframework:spring-beans:3.1.2.RELEASE"
-        compile "org.springframework:spring-context:3.1.2.RELEASE"
-        compile "org.springframework:spring-orm:3.1.2.RELEASE"
-        compile "org.springframework:spring-tx:3.1.2.RELEASE"
-    }
+   dependencies {
+      compile project(':util.time')
+      compile 'javax.mail:mail:1.4.7'
+      compile "org.apache.commons:commons-lang3:3.1"
+      compile "commons-httpclient:commons-httpclient:3.1"
+      compile "org.hibernate:hibernate-entitymanager:4.1.9.Final"
+      compile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final"
+      compile "org.springframework:spring-core:$springVersion"
+      compile "org.springframework:spring-beans:$springVersion"
+      compile "org.springframework:spring-context:$springVersion"
+      compile "org.springframework:spring-orm:$springVersion"
+      compile "org.springframework:spring-tx:$springVersion"
+   }
 }
 
 project(':mediadownloader.series') {
-    dependencies {
-        compile project(':mediadownloader.core')
-        
-        testCompile project(':mediadownloader.core').sourceSets.test.output
-    }
+   dependencies {
+      compile project(':mediadownloader.core')
+
+      testCompile project(':mediadownloader.core').sourceSets.test.output
+   }
 }
 
 project(':integration-tests') {
-    dependencies {
-        compile project(':mediadownloader.core')
-        compile project(':mediadownloader.series')
-        compile "commons-io:commons-io:2.1"
-        
-        testCompile project(':mediadownloader.core').sourceSets.test.output
-        testCompile "org.hsqldb:hsqldb:2.2.8"
-    }
+   dependencies {
+      compile project(':mediadownloader.core')
+      compile project(':mediadownloader.series')
+      compile "commons-io:commons-io:2.1"
+
+      testCompile project(':mediadownloader.core').sourceSets.test.output
+      testCompile "org.hsqldb:hsqldb:2.2.8"
+   }
 }
 
 project(':mediadownloader.executable') {
 
-    shadowJar {
-        transform(com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer) {
-            resource = 'META-INF/spring.handlers'
-        }
-        transform(com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer) {
-            resource = 'META-INF/spring.schemas'
-        }
-    }
+   shadowJar {
+      transform(com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer) {
+         resource = 'META-INF/spring.handlers'
+      }
+      transform(com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer) {
+         resource = 'META-INF/spring.schemas'
+      }
+   }
 
-    dependencies {
-        runtime project(':mediadownloader.core')
-        runtime project(':mediadownloader.series')
-        runtime "mysql:mysql-connector-java:5.1.22"
-        
-        jar {
-            dependsOn configurations.runtime
-            from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-            manifest { attributes 'Main-Class': 'com.jdom.mediadownloader.MediaDownloader' }
-        }
-    }
-    
-    // make sure that after creating the jar, the shadow process is run.
-	tasks.getByPath('jar').doLast {
-    	tasks.getByPath('shadowJar').execute()
-    	
-	}
- }
+   dependencies {
+      runtime project(':mediadownloader.core')
+      runtime project(':mediadownloader.series')
+      runtime "mysql:mysql-connector-java:5.1.22"
 
-project(':util.time') {
-    configurations {
-        testArtifacts.extendsFrom testRuntime
-    }
-    task testJar(type: Jar) {
-        classifier "test"
-        from sourceSets.test.output
-    }
-    artifacts {
-        testArtifacts testJar
-    }
+      jar {
+         dependsOn configurations.runtime
+         from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
+         manifest { attributes 'Main-Class': 'com.jdom.mediadownloader.MediaDownloader' }
+      }
+   }
+
+   // make sure that after creating the jar, the shadow process is run.
+   tasks.getByPath('jar').doLast {
+      tasks.getByPath('shadowJar').execute()
+
+   }
 }
 
-configure(subprojects.findAll {it.name != 'util.time'}) {
-    dependencies {
-        sharedTest project(path: ':util.time', configuration: 'testArtifacts')
-    }
+project(':util.time') {
+   configurations {
+      testArtifacts.extendsFrom testRuntime
+   }
+   task testJar(type: Jar) {
+      classifier "test"
+      from sourceSets.test.output
+   }
+   artifacts {
+      testArtifacts testJar
+   }
+}
+
+configure(subprojects.findAll { it.name != 'util.time' }) {
+   dependencies {
+      sharedTest project(path: ':util.time', configuration: 'testArtifacts')
+   }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
+   gradleVersion = '2.1'
 }

@@ -35,17 +35,7 @@ import java.util.Collection;
  */
 public class FileUtils {
 
-    /**
-     * Constant to control how many bytes to read from an input stream at a time.
-     */
-    public static final int BYTES_TO_READ_AT_A_TIME = 4096;
-
-    /**
-     * Constant representing nothing was read.
-     */
-    public static final int NOTHING_READ = -1;
-
-    /**
+   /**
      * Retrieve an input stream for a file.
      * 
      * @param file
@@ -125,54 +115,6 @@ public class FileUtils {
      */
     public static InputStream getInputStream(String filepath) {
         return FileUtils.getInputStream(new File(filepath));
-    }
-
-    /**
-     * Reads a file fully and returns it as a byte array.
-     * 
-     * @param file
-     *            The file to read
-     * @return The byte array of the file contents or null if the file couldn't be read
-     * @throws java.io.IOException
-     *             If an error occurs reading the file
-     */
-    public static byte[] readFileFully(File file) {
-        byte[] bytes = null;
-
-        long length = file.length();
-
-        bytes = new byte[(int) length];
-
-        InputStream inputStream = FileUtils.getInputStream(file);
-
-        if (inputStream != null) {
-
-            int bytesIndex = 0;
-
-            byte[] temp = new byte[BYTES_TO_READ_AT_A_TIME];
-
-            int bytesRead;
-
-            try {
-                bytesRead = inputStream.read(temp);
-
-                // Keep reading bytes until there's nothing left to read
-                while (bytesRead != NOTHING_READ) {
-                    // Copy them into the return array
-                    for (int i = 0; i < bytesRead; i++) {
-                        bytes[bytesIndex++] = temp[i];
-                    }
-
-                    bytesRead = inputStream.read(temp);
-                }
-            } catch (IOException e) {
-                throw new FileException("Error reading the file!", e);
-            } finally {
-                Closeables.closeQuietly(inputStream);
-            }
-        }
-
-        return bytes;
     }
 
     /**
