@@ -18,13 +18,11 @@ package com.jdom.mediadownloader.series.util;
 
 import com.jdom.mediadownloader.series.domain.Series;
 import com.jdom.mediadownloader.series.download.RegexMatch;
-import com.jdom.mediadownloader.series.download.RegexUtil;
 import com.jdom.mediadownloader.services.UrlDownloadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -66,27 +64,12 @@ public abstract class AbstractSeriesLinkFinder implements SeriesLinkFinder {
 	/**
 	 * Gets all of the lines from the configured series download check page that
 	 * contain links.
-	 * 
+	 *
 	 * @param series
 	 *            the series to check for
 	 * @return the collection of regex matches
 	 */
-	protected Collection<RegexMatch> getLinkMatches(Series series) {
-		Collection<RegexMatch> matches = Collections.emptyList();
-
-		String seriesUrl = getSeriesSearchPage(series);
-
-		if (seriesUrl == null || seriesUrl.isEmpty()) {
-			LOG.warn("Unable to find a specific url for series " + series
-					+ "!  Returning empty list of matches...");
-		} else {
-			String pageHtml = urlDownloadService.downloadUrlContents(seriesUrl);
-
-			matches = RegexUtil.findRegexMatches(pageHtml, LINK_REGEX);
-		}
-
-		return matches;
-	}
+	protected abstract Collection<RegexMatch> getLinkMatches(Series series);
 
 	/**
 	 * Gets the search for a series.

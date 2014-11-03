@@ -16,18 +16,17 @@
  */
 package com.jdom.tvshowdownloader.integration;
 
-import com.jdom.mediadownloader.series.download.FileUtils;
-import com.jdom.mediadownloader.services.UrlDownloadService;
+import com.jdom.mediadownloader.services.UrlDownload;
 
-public class MockUrlDownloadService implements UrlDownloadService {
+import java.io.IOException;
+
+public class MockUrlDownloadService extends UrlDownload {
 
 	@Override
-	public String downloadUrlContents(String path) {
-		if (path.startsWith("show=")) {
-			return FileUtils.readFile(MockUrlDownloadService.class,
-					"/" + path.substring("show=".length()) + ".xml");
-		}
-		return "";
+	public String downloadUrlContents(String path)  throws IOException {
+		return path.startsWith("show=") ?
+				super.downloadUrlContents(MockUrlDownloadService.class.getResource("/" + path.substring("show=".length()) + ".xml").toExternalForm())
+				: "";
 	}
 
 }

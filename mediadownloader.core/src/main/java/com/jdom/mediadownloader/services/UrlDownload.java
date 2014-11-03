@@ -16,11 +16,21 @@
  */
 package com.jdom.mediadownloader.services;
 
+import com.google.common.io.Resources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.Charset;
+
 public class UrlDownload implements UrlDownloadService {
 
+	private static Logger LOG = LoggerFactory.getLogger(UrlDownload.class);
+
 	@Override
-	public String downloadUrlContents(String path) {
-		return HtmlUtil.downloadUrlContents(path);
+	public String downloadUrlContents(String path) throws IOException {
+			return Resources.toString(new URL(path), Charset.defaultCharset());
 	}
 
 }

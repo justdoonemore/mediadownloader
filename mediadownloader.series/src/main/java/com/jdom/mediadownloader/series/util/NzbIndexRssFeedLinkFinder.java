@@ -25,7 +25,9 @@ import com.jdom.mediadownloader.services.UrlDownloadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -33,108 +35,113 @@ import java.util.regex.Pattern;
 
 public class NzbIndexRssFeedLinkFinder extends AbstractSeriesLinkFinder {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(NzbIndexRssFeedLinkFinder.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(NzbIndexRssFeedLinkFinder.class);
 
-	private static final String DEFAULT_AGE = System.getProperty("default.age");
+    private static final String DEFAULT_AGE = System.getProperty("default.age");
 
-	private static final String INITIAL_AGE = System.getProperty("initial.age");
+    private static final String INITIAL_AGE = System.getProperty("initial.age");
 
-	private static final Pattern SHOW_REPLACEMENT_PATTERN = Pattern
-			.compile("@SHOW@");
+    private static final Pattern SHOW_REPLACEMENT_PATTERN = Pattern
+            .compile("@SHOW@");
 
-	private static final Pattern AGE_REPLACEMENT_PATTERN = Pattern
-			.compile("@AGE@");
+    private static final Pattern AGE_REPLACEMENT_PATTERN = Pattern
+            .compile("@AGE@");
 
-	private static final Pattern SPACE_REPLACEMENT_PATTERN = Pattern
-			.compile("\\s");
+    private static final Pattern SPACE_REPLACEMENT_PATTERN = Pattern
+            .compile("\\s");
 
-	protected static final String LINK_REGEX = "<item>.*?</item>";
+    protected static final String LINK_REGEX = "<item>.*?</item>";
 
-	protected static final long TWO_MINUTES_IN_MILLIS = 2 * 60000;
+    protected static final long TWO_MINUTES_IN_MILLIS = 2 * 60000;
 
-	private final String seriesSearchUrl;
+    private final String seriesSearchUrl;
 
-	private final String[] seriesDownloadTitleExclusions;
+    private final String[] seriesDownloadTitleExclusions;
 
-	public NzbIndexRssFeedLinkFinder(String seriesSearchUrl,
-			String[] seriesDownloadTitleExclusions,
-			UrlDownloadService downloadService) {
-		super(downloadService);
-		this.seriesSearchUrl = seriesSearchUrl;
-		this.seriesDownloadTitleExclusions = seriesDownloadTitleExclusions;
-	}
+    public NzbIndexRssFeedLinkFinder(String seriesSearchUrl,
+            String[] seriesDownloadTitleExclusions,
+            UrlDownloadService downloadService) {
+        super(downloadService);
+        this.seriesSearchUrl = seriesSearchUrl;
+        this.seriesDownloadTitleExclusions = seriesDownloadTitleExclusions;
+    }
 
-	@Override
-	public Collection<SeriesDownload> findSeriesDownloads(List<Series> entities) {
-		Collection<SeriesDownload> downloads = findSeriesDownloads(entities,
-				seriesDownloadTitleExclusions);
+    @Override
+    public Collection<SeriesDownload> findSeriesDownloads(List<Series> entities) {
+        Collection<SeriesDownload> downloads = findSeriesDownloads(entities,
+                seriesDownloadTitleExclusions);
 
-		return downloads;
-	}
+        return downloads;
+    }
 
-	/**
-	 * This method finds any available downloads for the specified series.
-	 * 
-	 * @param listOfSeries
-	 *            the list of series to look for links of
-	 * @param titleExclusions
-	 * @return the collection of series downloads
-	 */
-	private Collection<SeriesDownload> findSeriesDownloads(
-			List<Series> listOfSeries, String[] titleExclusions) {
-		Collection<SeriesDownload> downloads = new HashSet<SeriesDownload>();
+    /**
+     * This method finds any available downloads for the specified series.
+     * 
+     * @param listOfSeries
+     *            the list of series to look for links of
+     * @param titleExclusions
+     * @return the collection of series downloads
+     */
+    private Collection<SeriesDownload> findSeriesDownloads(
+            List<Series> listOfSeries, String[] titleExclusions) {
+        Collection<SeriesDownload> downloads = new HashSet<SeriesDownload>();
 
-		// Loop over each series and try to find any downloads
-		for (Series series : listOfSeries) {
-			SeriesDownloadFinder seriesDownloadFinder = new SeriesDownloadFinder(
-					series, this, titleExclusions);
+        // Loop over each series and try to find any downloads
+        for (Series series : listOfSeries) {
+            SeriesDownloadFinder seriesDownloadFinder = new SeriesDownloadFinder(
+                    series, this, titleExclusions);
 
-			downloads.addAll(seriesDownloadFinder.findDownloads());
-		}
+            downloads.addAll(seriesDownloadFinder.findDownloads());
+        }
 
-		return downloads;
-	}
+        return downloads;
+    }
 
-	@Override
-	protected Collection<RegexMatch> getLinkMatches(Series series) {
+    @Override
+    protected Collection<RegexMatch> getLinkMatches(Series series) {
 
-		String homepageHtml = urlDownloadService
-				.downloadUrlContents(getSeriesSearchPage(series));
+        String seriesSearchPage = getSeriesSearchPage(series);
+        try {
+            String homepageHtml = urlDownloadService
+               .downloadUrlContents(seriesSearchPage);
+            return RegexUtil.findRegexMatches(homepageHtml, getRegexPattern());
+        } catch (IOException e) {
+            LOG.error(String.format("Unable to download contents of url [%s]", seriesSearchPage), e);
+            return Collections.emptyList();
+        }
+    }
 
-		return RegexUtil.findRegexMatches(homepageHtml, getRegexPattern());
-	}
+    @Override
+    protected String getSeriesSearchPage(Series series) {
+        String seriesUrl = getSeriesDownloadUrl();
 
-	@Override
-	protected String getSeriesSearchPage(Series series) {
-		String seriesUrl = getSeriesDownloadUrl();
+        Matcher matcher = SHOW_REPLACEMENT_PATTERN.matcher(seriesUrl);
+        seriesUrl = matcher.replaceAll(series.getName());
 
-		Matcher matcher = SHOW_REPLACEMENT_PATTERN.matcher(seriesUrl);
-		seriesUrl = matcher.replaceAll(series.getName());
+        boolean initialSearch = series.getEpisode() == 1
+                && series.getSeason() == 1;
 
-		boolean initialSearch = series.getEpisode() == 1
-				&& series.getSeason() == 1;
+        matcher = AGE_REPLACEMENT_PATTERN.matcher(seriesUrl);
+        seriesUrl = matcher.replaceAll((initialSearch) ? INITIAL_AGE
+                : DEFAULT_AGE);
 
-		matcher = AGE_REPLACEMENT_PATTERN.matcher(seriesUrl);
-		seriesUrl = matcher.replaceAll((initialSearch) ? INITIAL_AGE
-				: DEFAULT_AGE);
+        matcher = SPACE_REPLACEMENT_PATTERN.matcher(seriesUrl);
+        seriesUrl = matcher.replaceAll(".");
 
-		matcher = SPACE_REPLACEMENT_PATTERN.matcher(seriesUrl);
-		seriesUrl = matcher.replaceAll(".");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Series [%s] search url [%s]",
+                    series.getName(), seriesUrl));
+        }
 
-		if (LOG.isDebugEnabled()) {
-			LOG.debug(String.format("Series [%s] search url [%s]",
-					series.getName(), seriesUrl));
-		}
+        return seriesUrl;
+    }
 
-		return seriesUrl;
-	}
+    String getSeriesDownloadUrl() {
+        return seriesSearchUrl;
+    }
 
-	String getSeriesDownloadUrl() {
-		return seriesSearchUrl;
-	}
-
-	protected String getRegexPattern() {
-		return LINK_REGEX;
-	}
+    protected String getRegexPattern() {
+        return LINK_REGEX;
+    }
 }

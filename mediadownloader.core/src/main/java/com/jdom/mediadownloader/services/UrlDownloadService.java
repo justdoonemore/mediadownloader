@@ -13,8 +13,11 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */package com.jdom.mediadownloader.services;
+ */
+package com.jdom.mediadownloader.services;
+
+import java.io.IOException;
 
 public interface UrlDownloadService {
-	String downloadUrlContents(String path);
+	String downloadUrlContents(String path) throws IOException;
 }
